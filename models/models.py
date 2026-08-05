@@ -1,9 +1,11 @@
 from datetime import date
-import hashlib
 from typing import Optional
 from enum import Enum
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from sqlalchemy import String, Text, ForeignKey, Date, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+
 from core import Base
 
 class BookState(Enum):
@@ -21,15 +23,16 @@ class User(Base):
 
     user_books: Mapped[list["UserBook"]] = relationship(back_populates="user")
 
-    @staticmethod
-    def hash_password(password):
-        return hashlib.sha256(password.encode()).hexdigest()
+    @property
+    def password(self):
+        raise AttributeError("Password is not an accessible property.")
 
-    def set_password(self, password):
-        self.password_hash = self.hash_password(password)
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password=password)
 
     def check_password(self, password):
-        return self.password_hash == self.hash_password(password)
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f"User(id={self.id}, username={self.username})"
