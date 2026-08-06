@@ -3,8 +3,8 @@ import contextlib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from core.database import Base
-from models.models import User, BookState
+from core import Base
+from models import User, BookState
 from services import library
 
 BOOK_DATA = {
