@@ -27,7 +27,7 @@ def authenticate_user(username: str, password: str) -> User | None:
         user = session.scalars(stmt).first()
 
         if not user:
-            raise ValueError(f"User '{username} does not exist.")
+            raise ValueError(f"User '{username}' does not exist.")
 
         if not user.check_password(password=password):
             raise ValueError(f"Invalid password for user '{username}'")
