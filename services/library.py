@@ -1,0 +1,63 @@
+from typing import Any
+from sqlalchemy import select, update, delete
+from sqlalchemy.orm import joinedload
+
+from core import get_session
+from models import Book, UserBook, BookState
+
+def add_book(user_id: int, book_data: dict[str, Any], state: BookState) -> None:
+    with get_session() as session:
+        stmt = select(Book).where(Book.google_book_id == book_data.get("google_book_id"))
+        book = session.scalars(stmt).first()
+        if not book:
+            book = Book(
+                google_book_id=book_data.get("google_book_id"),
+                title = book_data.get("title"),
+                author = book_data.get("author"),
+                cover_url = book_data.get("cover_url"),
+                description = book_data.get("description"),
+                genres = book_data.get("genres"),
+                page_count = book_data.get("page_count")
+            )
+            session.add(book)
+            session.flush()
+
+        stmt_exist_link = select(UserBook).where(
+            UserBook.user_id == user_id, 
+            UserBook.book_id == book.id
+        )
+        existing_link = session.scalars(stmt_exist_link).first()
+        if existing_link:
+            existing_link.state = state
+        else:
+            user_book = UserBook(user_id=user_id, book_id=book.id, state=state)
+            session.add(user_book)
+        session.commit()
+
+def remove_book(user_id: int, book_id: int) -> None:
+    with get_session() as session:
+        stmt = (
+            delete(UserBook)
+            .where(UserBook.user_id == user_id, UserBook.book_id == book_id)
+        )
+        session.execute(stmt)
+        session.commit()
+
+def update_book_state(user_id: int, book_id: int, new_state: BookState) -> None:
+    with get_session() as session:
+        stmt = (
+            update(UserBook)
+            .where(UserBook.user_id == user_id, UserBook.book_id == book_id)
+            .values(state=new_state)
+        )
+        session.execute(stmt)
+        session.commit()
+
+def get_user_shelf(user_id: int) -> list[UserBook]:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .options(joinedload(UserBook.book))
+            .where(UserBook.user_id == user_id)
+        )
+        return list(session.scalars(stmt).all())
