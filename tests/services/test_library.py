@@ -4,18 +4,19 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from core import Base
-from models import User, BookState
+from models import User, BookState, Book
 from services import library
 
-BOOK_DATA = {
-    "google_book_id": "ABCDEF123456",
-    "title": "1984",
-    "author": "George Orwell",
-    "cover_url": None,
-    "description": "A distopic end to the world, leadered by the party",
-    "genres": "fiction, dystopia",
-    "page_count": "311"
-}
+def get_sample_book():
+    return Book(
+        google_book_id = "ABCDEF123456",
+        title = "1984",
+        author = "George Orwell",
+        cover_url = None,
+        description = "A distopic end to the world, leadered by the party",
+        genres = "fiction, dystopia",
+        page_count = "311"
+    )
 
 @pytest.fixture
 def db_session(monkeypatch):
@@ -42,7 +43,8 @@ def test_add_new_book(db_session):
     db_session.add(user)
     db_session.commit()
 
-    library.add_book(user_id=user.id, book_data=BOOK_DATA, state=BookState.READ)
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ)
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 1
@@ -54,19 +56,37 @@ def test_add_existing_book_updates_state(db_session):
     db_session.add(user)
     db_session.commit()
 
-    library.add_book(user_id=user.id, book_data=BOOK_DATA, state=BookState.WISHED)
-    library.add_book(user_id=user.id, book_data=BOOK_DATA, state=BookState.READ)
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.WISHED)
+
+    same_book = get_sample_book()
+    library.add_book(user_id=user.id, book=same_book, state=BookState.READ)
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 1
     assert user_shelf[0].state == BookState.READ
+
+def test_add_book_already_in_db(db_session):
+    user = User(username="beenreadinallday", password="irllyrllylovelee")
+    existing_book = get_sample_book()
+
+    db_session.add(user)
+    db_session.add(existing_book)
+    db_session.commit()
+
+    library.add_book(user_id=user.id, book=existing_book, state=BookState.READ)
+
+    user_shelf = library.get_user_shelf(user_id=user.id)
+    assert len(user_shelf) == 1
+    assert user_shelf[0].book_id == existing_book.id
 
 def test_update_book_state(db_session):
     user = User(username="imaworm", password="leeisthebest")
     db_session.add(user)
     db_session.commit()
 
-    library.add_book(user_id=user.id, book_data=BOOK_DATA, state=BookState.WISHED)
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.WISHED)
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     book_id = user_shelf[0].book_id
@@ -81,7 +101,8 @@ def test_remove_book(db_session):
     db_session.add(user)
     db_session.commit()
 
-    library.add_book(user_id=user.id, book_data=BOOK_DATA, state=BookState.WISHED)
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.WISHED)
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     book_id = user_shelf[0].book_id
