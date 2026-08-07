@@ -1,6 +1,8 @@
 from nicegui import ui, app
 from services import authenticate_user, register_user
+
 from views.theme import apply_theme
+from views.components import user_input, submit_button
 
 @ui.page('/login')
 def login_page():
@@ -16,8 +18,8 @@ def login_page():
             
             # Log in tab
             with ui.tab_panel(login_tab):
-                login_user = ui.input('User').classes('w-full').props('outlined')
-                login_password = ui.input('Password', password=True).classes('w-full').props('outlined')
+                login_user = user_input('User', icon='account_circle')
+                login_password = user_input('Password', icon='lock', password=True)
 
                 def handle_login():
                     try:
@@ -27,13 +29,13 @@ def login_page():
                     except ValueError as err:
                         ui.notify(str(err), color="negative")
 
-                ui.button("Log in", on_click=handle_login).classes('w-full mt-4 rounded-lg')
+                submit_button('Log in', on_click=handle_login).classes('mt-4')
 
             # Register tab
             with ui.tab_panel(register_tab):
-                reg_user = ui.input('User').classes('w-full').props('outlined')
-                reg_password = ui.input('Password', password=True).classes('w-full').props('outlined')
-                reg_password_repeat = ui.input('Repeat password', password=True).classes('w-full').props('outlined')
+                reg_user = user_input('User', icon='account_circle')
+                reg_password = user_input('Password', icon='lock', password=True)
+                reg_password_repeat = user_input('Repeat password', icon="password", password=True)
 
                 def handle_register():
                     if reg_password.value != reg_password_repeat.value:
@@ -49,4 +51,4 @@ def login_page():
                     except ValueError as err:
                         ui.notify(str(err), color="negative")
 
-                ui.button("Make account", on_click=handle_register).classes('w-full mt-4 rounded-lg')
+                submit_button(text="Make account", on_click=handle_register).classes('mt-4')
