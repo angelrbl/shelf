@@ -1,26 +1,21 @@
-from typing import Any
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, inspect
 from sqlalchemy.orm import joinedload
 
 from core import get_session
 from models import Book, UserBook, BookState
 
-def add_book(user_id: int, book_data: dict[str, Any], state: BookState) -> None:
+def add_book(user_id: int, book: Book, state: BookState) -> None:
     with get_session() as session:
-        stmt = select(Book).where(Book.google_book_id == book_data.get("google_book_id"))
-        book = session.scalars(stmt).first()
-        if not book:
-            book = Book(
-                google_book_id=book_data.get("google_book_id"),
-                title = book_data.get("title"),
-                author = book_data.get("author"),
-                cover_url = book_data.get("cover_url"),
-                description = book_data.get("description"),
-                genres = book_data.get("genres"),
-                page_count = book_data.get("page_count")
-            )
-            session.add(book)
-            session.flush()
+        
+        if book.id is None:
+            stmt = select(Book).where(Book.google_book_id == book.google_book_id)
+            existing_book = session.scalars(stmt).first()
+
+            if existing_book:
+                book = existing_book
+            else:
+                session.add(book)
+                session.flush()
 
         stmt_exist_link = select(UserBook).where(
             UserBook.user_id == user_id, 
