@@ -2,7 +2,7 @@ venv/
 .env
 __pycache__/
 *.db
-.streamlit/secrets.toml
+.nicegui
 .pytest_cache/
 *.egg-info
 #VSCODE SETTINGS
