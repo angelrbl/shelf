@@ -4,7 +4,7 @@ from nicegui import ui, app
 import models
 init_db()
 
-import pages.login
+import views.pages.login
 
 @ui.page('/')
 def index():
