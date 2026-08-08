@@ -5,6 +5,7 @@ import models
 init_db()
 
 import views.pages.login
+import views.pages.my_shelf
 
 @ui.page('/')
 def index():
