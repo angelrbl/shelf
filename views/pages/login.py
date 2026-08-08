@@ -5,7 +5,7 @@ from views.theme import apply_theme
 from views.components import user_input, submit_button
 
 @ui.page('/login')
-def login_page():
+def login_page() -> None:
     apply_theme()
     
     with ui.card().classes('absolute-center w-100 shadow-lg rounded-lg'):

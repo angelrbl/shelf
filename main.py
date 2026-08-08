@@ -8,7 +8,7 @@ import views.pages.login
 import views.pages.my_shelf
 
 @ui.page('/')
-def index():
+def index() -> None:
     if not app.storage.user.get('user_id'):
         ui.navigate.to('/login')
     else:

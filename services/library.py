@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, delete, inspect
+from sqlalchemy import select, update, delete
 from sqlalchemy.orm import joinedload
 
 from core import get_session
@@ -56,3 +56,14 @@ def get_user_shelf(user_id: int) -> list[UserBook]:
             .where(UserBook.user_id == user_id)
         )
         return list(session.scalars(stmt).all())
+
+if __name__ == "__main__":
+    from services import search_books
+    book = search_books(query='1984 George Orwell')[0]
+
+    add_book(user_id=1, book=book, state=BookState.READ)
+    print(f"Successfully added {book} to angel's library.")
+
+    user_shelf = get_user_shelf(user_id=1)
+    for user_book in user_shelf:
+        print("User book: ", user_book)
