@@ -28,10 +28,17 @@ def shelf_header() -> None:
 def book_card(user_book: UserBook) -> None:
     book = user_book.book
 
-    with ui.card().classes('p-0 w-56 overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md'):
-        ui.image(book.cover_url).classes('h-72 w-full object-contain')
-        with ui.column().classes('p-3 gap-1'):
+    with ui.card().classes('p-0 w-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
+        ui.image(book.cover_url).classes('h-48 sm:h-56 w-full object-contain')
+        with ui.column().classes('p-5 pt-0 gap-1'):
             ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
             ui.label(book.author).classes('text-xs text-slate-500')
             with ui.row().classes('mt-2'):
                 ui.badge(user_book.state.value.title()).classes('p-1.75').props('rounded')
+
+def add_book_card() -> None:
+    with ui.card().on('click', lambda: ui.notify('Add a book!')).classes(
+        'w-full h-full min-h-[250px] sm:min-h-[300px] items-center justify-center cursor-pointer '
+        'bg-transparent shadow-sm hover:shadow-md border border-dashed border-gray-700'
+    ):
+        ui.label('+ Add Book').classes('text-gray-700')
