@@ -21,7 +21,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(30), unique=True)
     password_hash: Mapped[str] = mapped_column()
 
-    user_books: Mapped[list["UserBook"]] = relationship(back_populates="user")
+    user_books: Mapped[list["UserBook"]] = relationship("UserBook", back_populates="user", cascade="all, delete-orphan")
 
     @property
     def password(self):
@@ -49,7 +49,7 @@ class Book(Base):
     genres: Mapped[Optional[str]] = mapped_column(String(200))
     page_count: Mapped[Optional[int]] = mapped_column()
 
-    user_books: Mapped[list["UserBook"]] = relationship(back_populates="book")
+    user_books: Mapped[list["UserBook"]] = relationship("UserBook", back_populates="book")
 
     def __repr__(self):
         return f"Book(id={self.id}, google_book_id={self.google_book_id}, title={self.title}, author={self.author})"
@@ -58,16 +58,16 @@ class UserBook(Base):
     __tablename__ = "user_book"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    book_id: Mapped[int] = mapped_column(ForeignKey("book.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete='CASCADE'))
+    book_id: Mapped[int] = mapped_column(ForeignKey("book.id", ondelete='CASCADE'))
     state: Mapped[BookState] = mapped_column(default=BookState.WISHED)
     start_date: Mapped[Optional[date]] = mapped_column(Date)
     end_date: Mapped[Optional[date]] = mapped_column(Date)
     rating: Mapped[Optional[int]] = mapped_column()
     note: Mapped[Optional[str]] = mapped_column(Text)
 
-    user: Mapped[User] = relationship(back_populates="user_books")
-    book: Mapped[Book] = relationship(back_populates="user_books")
+    user: Mapped[User] = relationship("User", back_populates="user_books")
+    book: Mapped[Book] = relationship("Book", back_populates="user_books")
 
     def __repr__(self):
         return f"UserBook(id={self.id}, user_id={self.user_id}, book_id={self.book_id}, state={self.state})"
