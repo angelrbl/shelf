@@ -70,3 +70,22 @@ def test_authenticate_failures(db_session):
 
     with pytest.raises(ValueError):
         auth.authenticate_user(username="lee_bro1", password="ihavenobrothers")
+
+def test_delete_user_success(db_session):
+    user = auth.register_user(username="andy_weir_999", password="hail_mary_for_the_win")
+    assert db_session.get(User, user.id) is not None
+
+    auth.delete_user(user_id=user.id, password="hail_mary_for_the_win")
+    assert db_session.get(User, user.id) is None
+
+def test_delete_user_does_not_exist(db_session):
+    user = auth.register_user(username="xX_lee_Xx", password="iamthereallee")
+
+    with pytest.raises(ValueError):
+        auth.delete_user(user_id=(user.id+1), password="iamthereallee")
+
+def test_delete_user_wrong_password(db_session):
+    user = auth.register_user(username="Xx_LEE_xX", password="heisnotthereallee")
+    
+    with pytest.raises(ValueError):
+        auth.delete_user(user_id=user.id, password="onlyiamlee")

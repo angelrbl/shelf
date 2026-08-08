@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from core import get_session
 from models import User
@@ -27,10 +27,25 @@ def authenticate_user(username: str, password: str) -> User | None:
         user = session.scalars(stmt).first()
 
         if not user:
-            raise ValueError(f"User '{username} does not exist.")
+            raise ValueError(f"User '{username}' does not exist.")
 
         if not user.check_password(password=password):
             raise ValueError(f"Invalid password for user '{username}'")
 
         session.expunge(user)
         return user
+
+def delete_user(user_id: int, password: str) -> bool:
+    with get_session() as session:
+        user = session.get(User, user_id)
+
+        if not user:
+            raise ValueError(f"User does not exist.")
+
+        if not user.check_password(password=password):
+            raise ValueError(f"Invalid password for user '{user.username}'")
+
+        session.delete(user)
+        session.commit()
+
+        return True
