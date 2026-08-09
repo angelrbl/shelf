@@ -7,11 +7,14 @@ from core import GOOGLE_BOOKS_API_KEY, get_session
 
 GOOGLE_BOOKS_API_URL = 'https://www.googleapis.com/books/v1/volumes'
 
-def search_books(query: str, max_results: int=5) -> list[Book]:
-    db_books = _search_books_from_database(query=query, max_results=max_results)
+def search_books(query: str, max_results: int=5, google_only: bool = False) -> list[Book]:
+    if not query:
+        return []
+    if not google_only:
+        db_books = _search_books_from_database(query=query, max_results=max_results)
 
-    if db_books:
-        return db_books
+        if db_books:
+            return db_books
 
     google_books_data = _search_books_from_google_api(query=query, max_results=max_results)
 
@@ -22,13 +25,16 @@ def search_books(query: str, max_results: int=5) -> list[Book]:
     return google_books
 
 def _search_books_from_google_api(query: str, max_results: int=5) -> list[dict]:
-    response = requests.get(
-        GOOGLE_BOOKS_API_URL, 
-        params={"q": query, "maxResults": max_results, "key": GOOGLE_BOOKS_API_KEY}
-    )
-    response.raise_for_status()
-    data = response.json()
-
+    try:
+        response = requests.get(
+            GOOGLE_BOOKS_API_URL, 
+            params={"q": query, "maxResults": max_results, "key": GOOGLE_BOOKS_API_KEY}
+        )
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.HTTPError as err:
+        print(f"Error with Google API: {err}")
+        data = {}
     books_data = []
 
     items = data.get("items") or []
