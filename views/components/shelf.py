@@ -13,14 +13,16 @@ def user_book_card(user_book: UserBook) -> None:
         'p-0 w-full h-56 sm:h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
 
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain')
-        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 justify-between'):
+        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 flex-1 justify-between'):
             ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
             ui.label(book.author).classes('text-xs text-slate-500')
 
             ui.space()
             
-            with ui.row().classes('mt-2'):
+            with ui.row().classes('w-full mt-2 justify-between items-center'):
                 ui.badge(user_book.state.value.title()).classes('p-1.75').props('rounded')
+                if user_book.rating:
+                    ui.label(f"{user_book.rating}/10").classes("text-bold text-slate-600 text-bold text-lg")
 
 def add_book_card() -> None:
     with ui.card().on('click', lambda: ui.navigate.to('/search')).classes(

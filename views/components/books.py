@@ -4,7 +4,7 @@ from typing import Optional
 from nicegui import ui, app
 
 from models import Book, BookState, UserBook
-from services import get_user_book_by_google_id, add_book
+from services import get_user_book_by_google_id, add_book, remove_book, get_user_shelf
 
 from views.components.core import submit_button
 
@@ -88,7 +88,7 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
     with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56 pr-4'):
         ui.label(book.description).classes('text-slate-600 leading-relaxed text-justify')
 
-def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_info: callable, on_switch_to_form_edit: callable) -> None:
+def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_info: callable, on_switch_to_form_edit: callable, on_delete: callable) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
             with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
                 ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-cover rounded-lg shadow-md')
@@ -116,27 +116,33 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
 
                 with ui.row().classes('w-full items-center justify-between mb-2 mt-2'):
                     submit_button(text="Edit info", on_click=on_switch_to_form_edit).classes('flex-1 sm:w-auto py-2 px-6 rounded-lg shadow-sm font-bold')
-                    ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
 
-    ui.label("Your reading info:").classes('font-bold text-slate-800 mt-4 text-lg')
-    
+                    with ui.row().classes('gap-2'):
+                        ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
+                        ui.button(icon='delete', on_click=on_delete).props('flat round color=red-500').tooltip('Remove from shelf')
+
     with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56 pr-4'):
-        with ui.row().classes('w-full justify-between items-center gap-4'):
-            ui.label(user_book.start_date).classes('text-slate-600 leading-relaxed text-justify text-bold text-xl')
-            ui.label(user_book.end_date).classes('text-slate-600 leading-relaxed text-justify text-bold text-xl')
+        ui.label("Your reading info:").classes('font-bold text-slate-800 mt-4 text-lg')
+        
+        with ui.row().classes('w-full items-center gap-4'):
+            ui.label(f"Start date: {user_book.start_date}").classes('text-slate-700 leading-relaxed text-justify text-bold text-lg') if user_book.start_date else None
+            ui.label(f"End date: {user_book.end_date}").classes('text-slate-700 leading-relaxed text-justify text-bold text-lg') if user_book.end_date else None
 
+        ui.label("Note:").classes('font-bold text-slate-800 mt-4 text-lg')
         ui.label(user_book.note).classes('text-slate-600 leading-relaxed text-justify text-lg')
                     
 
-def render_form_edit_view(book: Book, user_book: Optional[UserBook], start_on_form: bool, on_save: callable, on_switch_to_info: callable, on_switch_to_form: callable) -> None:
+def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: callable, on_switch_to_info: callable) -> None:
     with ui.row().classes('w-full items-center justify-between mb-2'):
         ui.label("Edit Shelf Details" if user_book else "Add to Shelf").classes('text-2xl font-bold text-slate-800')
 
     with ui.scroll_area().classes('w-full flex-grow h-[60vh] pr-4'):
         with ui.column().classes('w-full gap-4 pb-4'):
-            with ui.row().classes('items-center gap-4 w-full bg-slate-50 p-3 rounded-lg'):
-                ui.image(book.cover_url).classes('w-12 h-16 object-cover rounded shadow-sm')
-                ui.label(book.title).classes('font-semibold text-slate-700 line-clamp-2 flex-1')
+            with ui.row().classes('items-center gap-4 w-full bg-slate-50 p-3 rounded-lg justify-between'):
+                with ui.row().classes("items-center flex-1"):
+                    ui.image(book.cover_url).classes('w-12 h-16 object-cover rounded shadow-sm')
+                    ui.label(book.title).classes('font-semibold text-slate-700 line-clamp-2 flex-1')
+                ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
 
             state_select = ui.select(
                 options={state: state.value for state in BookState},
@@ -205,11 +211,21 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
                         on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book)
                     )
                 elif state == 'form':
+                    def handle_delete():
+                        remove_book(user_id=user_id, book_id=current_book.id)
+                        ui.notify("Book removed from your shelf.", type='positive')
+                        dialog.close()
+                        if start_on_form:
+                            from views.components.shelf import render_shelf
+                            user_shelf = get_user_shelf(user_id=user_id)
+                            render_shelf.refresh(user_shelf=user_shelf)
+                        
                     render_form_view(
                         book=current_book,
                         user_book=user_book,
                         on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book)
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book),
+                        on_delete=handle_delete
                     )
                 elif state == 'form_edit':
                     def handle_save(user_book_data):
@@ -234,10 +250,8 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
                     render_form_edit_view(
                         book=current_book,
                         user_book=user_book,
-                        start_on_form=start_on_form,
                         on_save=handle_save,
                         on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
-                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book)
                     )
 
             dynamic_dialog_content(state=initial_state, user_book=current_user_book)
