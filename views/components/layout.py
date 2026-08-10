@@ -7,8 +7,8 @@ def shelf_header() -> None:
     def log_out():
         app.storage.user.clear()
         go_home()
-    
-    with ui.header(fixed=False, bordered=True).classes('bg-transparent p-3').props('reveal'):
+
+    with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 backdrop-blur-md p-3 z-50').props('reveal'):
         with ui.row().classes('w-full items-center'):
             ui.label("Shelf.").on('click', go_home).classes('text-3xl font-bold text-slate-700 text pl-5 hover:text-slate-500 cursor-pointer')
             ui.space()
