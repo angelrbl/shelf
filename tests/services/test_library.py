@@ -1,5 +1,6 @@
 import pytest
 import contextlib
+from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -51,20 +52,22 @@ def test_add_new_book(db_session):
     assert user_shelf[0].book.title == "1984"
     assert user_shelf[0].state == BookState.READ
 
-def test_add_existing_book_updates_state(db_session):
+def test_add_existing_book_updates_book(db_session):
     user = User(username="thebooksreadme", password="ialsolovelee")
     db_session.add(user)
     db_session.commit()
 
     book = get_sample_book()
-    library.add_book(user_id=user.id, book=book, state=BookState.WISHED)
+    library.add_book(user_id=user.id, book=book, state=BookState.WISHED, rating=7, start_date=date(2007, 5, 19), end_date=date(2026, 5, 19))
 
     same_book = get_sample_book()
-    library.add_book(user_id=user.id, book=same_book, state=BookState.READ)
+    library.add_book(user_id=user.id, book=same_book, state=BookState.READ, rating=9, end_date=date(2026, 8, 12))
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 1
     assert user_shelf[0].state == BookState.READ
+    assert user_shelf[0].end_date == date(2026, 8, 12)
+    assert user_shelf[0].rating == 9
 
 def test_add_book_already_in_db(db_session):
     user = User(username="beenreadinallday", password="irllyrllylovelee")
@@ -79,6 +82,17 @@ def test_add_book_already_in_db(db_session):
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 1
     assert user_shelf[0].book_id == existing_book.id
+
+def test_add_book_wrong_date_order(db_session):
+    user = User(username="omgilovereadingsm", password="iwishicouldbelee")
+
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+
+    with pytest.raises(ValueError):
+        library.add_book(user_id=user.id, book=book, start_date=date(2026, 8, 12), end_date=date(2026, 5, 19))
 
 def test_update_book_state(db_session):
     user = User(username="imaworm", password="leeisthebest")
@@ -111,3 +125,20 @@ def test_remove_book(db_session):
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 0
+
+def test_get_user_book_by_google_id(db_session):
+    user = User(username="mysoulisreading", password="leewssupgng")
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+    google_id = book.google_book_id
+    library.add_book(user_id=user.id, book=book, state=BookState.READ)
+
+    user_shelf = library.get_user_shelf(user_id=user.id)
+    user_book_by_google_id = library.get_user_book_by_google_id(user_id=user.id, google_book_id=google_id)
+
+    another_user_book_by_google_id = library.get_user_book_by_google_id(user_id=user.id, google_book_id="ABCDEFGHIJKLM")
+
+    assert user_shelf[0].book_id == user_book_by_google_id.book_id
+    assert another_user_book_by_google_id is None
