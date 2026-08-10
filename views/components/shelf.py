@@ -6,15 +6,19 @@ from models import UserBook
 from views.components.books import book_dialog
 
 def user_book_card(user_book: UserBook) -> None:
+    user_id = user_book.user_id
     book = user_book.book
 
-    with ui.card().on("click", lambda: book_dialog(book=user_book.book, user_book=user_book, start_on_form=True)).classes(
+    with ui.card().on("click", lambda: book_dialog(user_id=user_id, book=user_book.book, current_user_book=user_book, start_on_form=True)).classes(
         'p-0 w-full h-56 sm:h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
 
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain')
-        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1'):
+        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 justify-between'):
             ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
             ui.label(book.author).classes('text-xs text-slate-500')
+
+            ui.space()
+            
             with ui.row().classes('mt-2'):
                 ui.badge(user_book.state.value.title()).classes('p-1.75').props('rounded')
 

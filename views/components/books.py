@@ -1,17 +1,30 @@
 import math
+from datetime import date
 from typing import Optional
-from nicegui import ui
+from nicegui import ui, app
 
 from models import Book, BookState, UserBook
+from services import get_user_book_by_google_id, add_book
 
 from views.components.core import submit_button
 
 def book_card(book: Book) -> None:
-    with ui.card().on('click', lambda: book_dialog(book=book)).classes('p-0 w-full h-56 sm:h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
+    user_id = app.storage.user.get("user_id")
+    user_book = get_user_book_by_google_id(user_id=user_id, google_book_id=book.google_book_id)
+
+    with ui.card().on('click', lambda: book_dialog(user_id=user_id, book=book, current_user_book=user_book)).classes(
+        'p-0 w-full h-56 sm:h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
+
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain')
-        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1'):
-            ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
+        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 justify-between'):
+            with ui.row().classes('w-full justify-center mt-0 mb-1'):
+                ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2 flex-1')
+                if user_book:
+                    ui.icon('bookmark_added').classes('text-slate-500 text-lg')
             ui.label(book.author).classes('text-xs text-slate-500')
+
+            ui.space()
+
             if book.genres:
                 genres = book.genres.split(", ")
                 end_idx = min(3, len(genres))
@@ -66,7 +79,7 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
             if start_on_form:
                 submit_button(text="Back to your info", on_click=on_switch_to_form).classes('w-full sm:w-auto mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
             elif is_on_shelf:
-                submit_button(text="✓ In shelf", on_click=lambda: ui.notify("Adding book")).classes('w-full sm:w-auto mt-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("Edit book in shelf")
+                submit_button(text="✓ In shelf", on_click=on_switch_to_form).classes('w-full sm:w-auto mt-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("Edit book in shelf")
             else:
                 submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('w-full sm:w-auto mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
 
@@ -108,11 +121,11 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
     ui.label("Your reading info:").classes('font-bold text-slate-800 mt-4 text-lg')
     
     with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56 pr-4'):
-        with ui.row().classes('w-full gap-4'):
-            ui.label(user_book.start_date).classes('text-slate-600 leading-relaxed text-justify')
-            ui.label(user_book.end_date).classes('text-slate-600 leading-relaxed text-justify')
+        with ui.row().classes('w-full justify-between items-center gap-4'):
+            ui.label(user_book.start_date).classes('text-slate-600 leading-relaxed text-justify text-bold text-xl')
+            ui.label(user_book.end_date).classes('text-slate-600 leading-relaxed text-justify text-bold text-xl')
 
-        ui.label(user_book.note).classes('text-slate-600 leading-relaxed text-justify')
+        ui.label(user_book.note).classes('text-slate-600 leading-relaxed text-justify text-lg')
                     
 
 def render_form_edit_view(book: Book, user_book: Optional[UserBook], start_on_form: bool, on_save: callable, on_switch_to_info: callable, on_switch_to_form: callable) -> None:
@@ -134,12 +147,12 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], start_on_fo
             with ui.row().classes('w-full gap-4'):
                 start_date_input = ui.input(
                     'Start Date', 
-                    value=user_book.start_date if user_book else ''
+                    value=date.strftime(user_book.start_date, '%Y-%m-%d') if user_book and user_book.start_date else ''
                 ).props('type=date').classes('flex-1')
                 
                 end_date_input = ui.input(
                     'End Date', 
-                    value=user_book.end_date if user_book else ''
+                    value=date.strftime(user_book.end_date, '%Y-%m-%d') if user_book and user_book.end_date else ''
                 ).props('type=date').classes('flex-1')  
 
             rating_input = ui.number(
@@ -155,10 +168,11 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], start_on_fo
 
             def handle_submit():
                 user_book_data = {
-                    'book_id': book.id,
+                    'book': book,
+                    'google_book_id': book.google_book_id,
                     'state': state_select.value,
-                    'start_date': start_date_input.value or None,
-                    'end_date': end_date_input.value or None,
+                    'start_date': date.strptime(start_date_input.value, '%Y-%m-%d') if start_date_input.value else None,
+                    'end_date': date.strptime(end_date_input.value, '%Y-%m-%d') if end_date_input.value else None,
                     'rating': rating_input.value,
                     'note': note_input.value
                 }
@@ -169,8 +183,8 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], start_on_fo
                 on_click=handle_submit
             ).classes('w-full mt-4 py-2 rounded-lg shadow-sm font-bold')
 
-def book_dialog(book: Book, user_book: Optional[UserBook] = None, start_on_form: bool = False, on_save_user_book: callable = None) -> None:
-    is_on_shelf = user_book is not None
+def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False) -> None:
+    is_on_shelf = current_user_book is not None
     initial_state = "form" if start_on_form else "info"
 
     with ui.dialog().classes('items-end sm:items-center !mb-0') as dialog:
@@ -179,36 +193,53 @@ def book_dialog(book: Book, user_book: Optional[UserBook] = None, start_on_form:
             'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl'):
 
             @ui.refreshable
-            def dynamic_dialog_content(state: str) -> None:
+            def dynamic_dialog_content(state: str, user_book: Optional[UserBook]) -> None:
+                current_book = user_book.book if user_book else book
+
                 if state == 'info':
                     render_info_view(
-                        book=book,
+                        book=current_book,
                         is_on_shelf=is_on_shelf,
                         start_on_form=start_on_form,
-                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form'),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit')
+                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book),
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book)
                     )
                 elif state == 'form':
                     render_form_view(
-                        book=book,
+                        book=current_book,
                         user_book=user_book,
-                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info'),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit')
+                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book)
                     )
                 elif state == 'form_edit':
                     def handle_save(user_book_data):
-                        ui.notify("Book data updated successfully!", type='positive')
-                        dialog.close()
+                        try:
+                            add_book(
+                                user_id=user_id,
+                                book=user_book_data.get("book"),
+                                state=user_book_data.get("state"),
+                                start_date=user_book_data.get("start_date"),
+                                end_date=user_book_data.get("end_date"),
+                                rating=user_book_data.get("rating"),
+                                note=user_book_data.get("note")
+                            )
+
+                            updated_user_book = get_user_book_by_google_id(user_id=user_id, google_book_id=user_book_data.get("google_book_id"))
+
+                            ui.notify("Book data updated successfully!", type='positive')
+                            dynamic_dialog_content.refresh(state='form', user_book=updated_user_book)
+                        except ValueError as err:
+                            ui.notify("End date can't be early than start date.", type='negative')
 
                     render_form_edit_view(
-                        book=book,
+                        book=current_book,
                         user_book=user_book,
                         start_on_form=start_on_form,
                         on_save=handle_save,
-                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info'),
-                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form')
+                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
+                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book)
                     )
 
-            dynamic_dialog_content(state=initial_state)
+            dynamic_dialog_content(state=initial_state, user_book=current_user_book)
 
     dialog.open()
