@@ -7,7 +7,7 @@ from models import Book, BookState, UserBook
 from services import get_user_book_by_google_id, add_book, remove_book, get_user_shelf
 
 from views.theme import STATE_COLORS
-from views.components.core import submit_button
+from views.components.core import submit_button, user_select
 
 def book_card(book: Book) -> None:
     user_id = app.storage.user.get("user_id")
@@ -162,13 +162,12 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
 
             with ui.row().classes('w-full gap-4 flex-col sm:flex-row'):
-                with ui.select(
+                state_select = user_select(
                     options={state: state.value.title() for state in BookState},
                     value=user_book.state if user_book else BookState.WISHED,
-                    label='Book State *'
-                ).props('outlined color=slate-700').classes('w-full sm:flex-1') as state_select:
-                    with state_select.add_slot('prepend'):
-                        ui.icon('bookmark').classes('text-slate-500 text-xl')
+                    label='Book State *',
+                    icon='bookmark'
+                ).props('outlined color=slate-700').classes('sm:flex-1')
 
                 with ui.number(
                     'Rating (0-10)', 

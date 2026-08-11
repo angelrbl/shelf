@@ -1,3 +1,4 @@
+from typing import Any
 from nicegui import ui
 
 def user_input(label: str, icon: str, password: bool=False, value:str | None = None) -> ui.input:
@@ -8,3 +9,9 @@ def user_input(label: str, icon: str, password: bool=False, value:str | None = N
 
 def submit_button(text: str, on_click: function) -> ui.button:
     return ui.button(text=text, on_click=on_click).classes('w-full shadow rounded-lg pt-2 pb-2')
+
+def user_select(options: dict, label:str | None = None, value: Any | None = None, on_change: callable | None = None, icon: str | None = None) -> ui.select:
+    base_select = ui.select(label=label, options=options, value=value, on_change=on_change).classes('w-full')
+    with base_select.add_slot('prepend'):
+        ui.icon(icon)
+    return base_select
