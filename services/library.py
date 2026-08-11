@@ -130,6 +130,19 @@ def filter_user_shelf(shelf: list[UserBook], query: str | None = None, state: Bo
 
     return filtered_books
 
+def get_unique_shelf_genres(shelf: list[UserBook]) -> list[str]:
+    unique_genres = set()
+
+    for user_book in shelf:
+        if user_book.book.genres:
+            genres = user_book.book.genres.split(',')
+            for g in genres:
+                clean_genre = g.strip().title()
+                if clean_genre:
+                    unique_genres.add(clean_genre)
+
+    return sorted(list(unique_genres))
+
 def get_user_book_by_google_id(user_id: int, google_book_id: str) -> None:
     with get_session() as session:
         stmt = (
