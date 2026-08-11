@@ -104,6 +104,32 @@ def get_user_shelf(user_id: int) -> list[UserBook]:
         )
         return list(session.scalars(stmt).all())
 
+def filter_user_shelf(shelf: list[UserBook], query: str | None = None, state: BookState | None = None, genre: str | None = None) -> list[UserBook]:
+    filtered_books = []
+
+    words = query.strip().lower().split() if query else []
+    target_genre = genre.strip().lower() if genre else None
+
+    for user_book in shelf:
+        title = user_book.book.title.lower()
+        author = user_book.book.author.lower()
+
+        matches_text = all(word in title or word in author for word in words)
+        
+        matches_state = (state is None) or (user_book.state == state)
+        matches_genre = True
+        if target_genre:
+            if user_book.book.genres:
+                book_genres = [g.strip().lower() for g in user_book.book.genres.split(',')]
+                matches_genre = target_genre in book_genres
+            else:
+                matches_genre = False
+
+        if matches_text and matches_state and matches_genre:
+            filtered_books.append(user_book)
+
+    return filtered_books
+
 def get_user_book_by_google_id(user_id: int, google_book_id: str) -> None:
     with get_session() as session:
         stmt = (
