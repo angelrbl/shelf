@@ -57,7 +57,7 @@ def render_books(books: list, page: int = 1, books_per_page: int = 10) -> None:
                 on_change=lambda e: render_books.refresh(books=books, page=e.value, books_per_page=books_per_page)
             ).props('rounded color=slate-7')
 
-def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_switch_to_form: callable, on_switch_to_form_edit: callable) -> None:
+def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_switch_to_form: callable, on_switch_to_form_edit: callable, on_delete: callable) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
         with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
             ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-cover rounded-lg shadow-md')
@@ -80,7 +80,9 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
             if start_on_form:
                 submit_button(text="Back to your info", on_click=on_switch_to_form).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
             elif is_on_shelf:
-                submit_button(text="✓ In shelf", on_click=on_switch_to_form).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
+                with ui.row().classes('gap-5 w-full mt-1 pr-2'):
+                    submit_button(text="✓ In shelf", on_click=on_switch_to_form).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
+                    ui.button(icon='delete', on_click=on_delete).props('flat round color=red-500').tooltip('Remove from shelf')
             else:
                 submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
 
@@ -225,24 +227,27 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
             def dynamic_dialog_content(state: str, user_book: Optional[UserBook]) -> None:
                 current_book = user_book.book if user_book else book
 
+                def handle_delete():
+                    remove_book(user_id=user_id, book_id=current_book.id)
+                    ui.notify("Book removed from your shelf.", type='positive')
+                    dialog.close()
+                    if start_on_form:
+                        from views.components.shelf import render_shelf
+                        user_shelf = get_user_shelf(user_id=user_id)
+                        render_shelf.refresh(user_shelf=user_shelf)
+                    else:
+                        render_books.refresh()
+                        
                 if state == 'info':
                     render_info_view(
                         book=current_book,
                         is_on_shelf=is_on_shelf,
                         start_on_form=start_on_form,
                         on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book)
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book),
+                        on_delete=handle_delete
                     )
                 elif state == 'form':
-                    def handle_delete():
-                        remove_book(user_id=user_id, book_id=current_book.id)
-                        ui.notify("Book removed from your shelf.", type='positive')
-                        dialog.close()
-                        if start_on_form:
-                            from views.components.shelf import render_shelf
-                            user_shelf = get_user_shelf(user_id=user_id)
-                            render_shelf.refresh(user_shelf=user_shelf)
-                        
                     render_form_view(
                         book=current_book,
                         user_book=user_book,
