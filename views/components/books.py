@@ -34,6 +34,9 @@ def book_card(book: Book) -> None:
 
 @ui.refreshable
 def render_books(books: list, page: int = 1, books_per_page: int = 10) -> None:
+    if not books:
+        return
+
     total_books = len(books)
     total_pages = max(1, math.ceil(total_books / books_per_page))
 

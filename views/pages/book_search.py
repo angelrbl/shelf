@@ -31,7 +31,13 @@ def book_search() -> None:
             render_books.refresh(books=books)
 
         with ui.row().classes('w-full items-center gap-4 justify-between ml-10 pr-20 mb-10'):
-            search_input = user_input(label="Search books", icon="search", value=query_value).classes(remove='w-full', add='flex-1').props(remove='outlined')
+            search_input = (
+                user_input(label="Search books", icon="search", value=query_value)
+                .classes(remove='w-full', add='flex-1')
+                .props(remove='outlined')
+                .on("blur", lambda: handle_search(search_query=search_input.value))
+                .on("keydown.enter", lambda: handle_search(search_query=search_input.value))
+            )
             submit_button(text="Search", on_click=lambda: handle_search(search_query=search_input.value)).classes(remove='w-full shadow')
 
         if query_value:
