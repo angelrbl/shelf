@@ -1,8 +1,9 @@
 import math
 from nicegui import ui
 
-from models import UserBook
+from models import UserBook, BookState
 
+from views.theme import STATE_COLORS
 from views.components.books import book_dialog
 
 def user_book_card(user_book: UserBook) -> None:
@@ -20,7 +21,10 @@ def user_book_card(user_book: UserBook) -> None:
             ui.space()
             
             with ui.row().classes('w-full mt-2 justify-between items-center'):
-                ui.badge(user_book.state.value.title()).classes('p-1.75').props('rounded')
+                current_state = user_book.state
+                color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
+                
+                ui.badge(user_book.state.value.title()).classes(f'{color_classes} p-1.75').props('rounded')
                 if user_book.rating:
                     ui.label(f"{user_book.rating}/10").classes("text-bold text-slate-600 text-bold text-lg")
 

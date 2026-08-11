@@ -28,7 +28,7 @@ def my_shelf_page() -> None:
         with ui.row().classes('w-full items-center gap-4 justify-between ml-10 pr-20'):
             query = user_input(label="Search your books", icon="search").classes(remove='w-full', add='flex-1').props(remove='outlined')
             submit_button(text="Add book", on_click=handle_search).classes(remove='w-full shadow')
-
+        
         ui.label("Your shelf:").classes('text-xl text-slate-700 text text-bold ml-10')
 
         user_shelf = get_user_shelf(user_id=app.storage.user.get("user_id"))

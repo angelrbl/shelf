@@ -6,6 +6,7 @@ from nicegui import ui, app
 from models import Book, BookState, UserBook
 from services import get_user_book_by_google_id, add_book, remove_book, get_user_shelf
 
+from views.theme import STATE_COLORS
 from views.components.core import submit_button
 
 def book_card(book: Book) -> None:
@@ -111,16 +112,8 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
                 ui.space()
     
                 with ui.row().classes('justify-between w-full items-end gap-5'):
-                    state_colors = {
-                        BookState.READ: "!bg-green-700 text-green-100",
-                        BookState.WISHED: "!bg-blue-700 text-blue-100",
-                        BookState.READING: "!bg-orange-800 text-orange-100",
-                        BookState.DROPPED: "!bg-red-700 text-red-100"
-                    }
-
                     current_state = user_book.state
-
-                    color_classes = state_colors.get(current_state, "bg-slate-100 text-slate-700")
+                    color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
 
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
 
