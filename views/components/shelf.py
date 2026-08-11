@@ -10,10 +10,10 @@ def user_book_card(user_book: UserBook) -> None:
     book = user_book.book
 
     with ui.card().on("click", lambda: book_dialog(user_id=user_id, book=user_book.book, current_user_book=user_book, start_on_form=True)).classes(
-        'p-0 w-full h-56 sm:h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
+        'p-0 w-full h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer flex flex-col'):
 
-        ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain')
-        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 flex-1 justify-between'):
+        ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain shrink-0')
+        with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 flex-1 justify-between flex flex-col w-full'):
             ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
             ui.label(book.author).classes('text-xs text-slate-500')
 
