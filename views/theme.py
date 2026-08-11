@@ -2,7 +2,21 @@ from nicegui import ui
 
 from models import BookState
 
+def hide_scrollbar():
+    ui.add_head_html('''
+        <style>
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            * {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    ''')
+
 def apply_theme() -> None:
+    hide_scrollbar()
     ui.colors(primary='#2c3e50', secondary='#18bc9c', accent='#e74c3c')
     ui.query('body').classes('bg-slate-50')
 

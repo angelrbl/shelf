@@ -17,7 +17,7 @@ def book_search() -> None:
             return
         
     apply_theme()
-    shelf_header()
+    shelf_header(current_path='/search')
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-6'):
         query_value = app.storage.user.pop('current_search_query', None)

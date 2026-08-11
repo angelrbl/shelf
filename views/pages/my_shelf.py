@@ -19,7 +19,7 @@ def my_shelf_page() -> None:
         return
     
     apply_theme()
-    shelf_header()
+    shelf_header(current_path='/my_shelf')
 
     user_shelf = get_user_shelf(user_id=app.storage.user.get("user_id"))
 
