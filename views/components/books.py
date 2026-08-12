@@ -7,7 +7,7 @@ from models import Book, BookState, UserBook
 from services import get_user_book_by_google_id, add_book, remove_book, get_user_shelf
 
 from views.theme import STATE_COLORS
-from views.components.core import submit_button, user_select
+from views.components.core import submit_button, user_select, icon_button
 
 def book_card(book: Book) -> None:
     user_id = app.storage.user.get("user_id")
@@ -85,7 +85,7 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
             elif is_on_shelf:
                 with ui.row().classes('gap-5 w-full mt-1 pr-2'):
                     submit_button(text="✓ In shelf", on_click=on_switch_to_form).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
-                    ui.button(icon='delete', on_click=on_delete).props('flat round color=red-500').tooltip('Remove from shelf')
+                    icon_button(icon='delete', on_click=on_delete, color="red-500", tooltip="Remove from shelf")
             else:
                 submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
 
@@ -129,24 +129,25 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
                     submit_button(text="Edit info", on_click=on_switch_to_form_edit).classes('flex-1 sm:w-auto py-2 px-6 rounded-lg shadow-sm font-bold')
 
                     with ui.row().classes('gap-2'):
-                        ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
-                        ui.button(icon='delete', on_click=on_delete).props('flat round color=red-500').tooltip('Remove from shelf')
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                        icon_button(icon='delete', on_click=on_delete, color="red-500", tooltip="Remove from shelf")
 
     with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56 pr-4'):
         if user_book.start_date or user_book.end_date or user_book.note:
             with ui.column().classes('bg-slate-50 rounded-xl p-4 w-full mt-4 border border-slate-100'):
 
-                with ui.row().classes('w-full items-center justify-center gap-6 border-b border-slate-200 pb-3 mb-2'):
-    
-                    if user_book.start_date:
-                        with ui.row().classes('items-center gap-2 text-slate-500'):
-                            ui.icon('calendar_today').classes('text-lg')
-                            ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
+                if user_book.start_date or user_book.end_date:
+                    with ui.row().classes('w-full items-center justify-center gap-6 border-b border-slate-200 pb-3 mb-2'):
+        
+                        if user_book.start_date:
+                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                                ui.icon('calendar_today').classes('text-lg')
+                                ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
 
-                    if user_book.end_date:
-                        with ui.row().classes('items-center gap-2 text-slate-500'):
-                            ui.icon('flag').classes('text-lg')
-                            ui.label(f"Finished: {user_book.end_date}").classes('text-sm font-medium')
+                        if user_book.end_date:
+                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                                ui.icon('flag').classes('text-lg')
+                                ui.label(f"Finished: {user_book.end_date}").classes('text-sm font-medium')
 
                 if user_book.note:
                     with ui.column().classes('w-full gap-1 mt-2'):
@@ -164,7 +165,7 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 with ui.row().classes("items-center flex-1"):
                     ui.image(book.cover_url).classes('w-12 h-16 object-cover rounded shadow-sm')
                     ui.label(book.title).classes('font-semibold text-slate-700 line-clamp-2 flex-1')
-                ui.button(icon='info', on_click=on_switch_to_info).props('flat round color=slate-500').tooltip('See book info')
+                icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
 
             with ui.row().classes('w-full gap-4 flex-col sm:flex-row'):
                 state_select = user_select(
