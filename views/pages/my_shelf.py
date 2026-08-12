@@ -5,7 +5,8 @@ from models import BookState
 
 from views.theme import apply_theme
 from views.components import (
-    shelf_header,
+    render_header,
+    render_mobile_bottom_bar,
     user_input,
     submit_button,
     render_shelf,
@@ -19,7 +20,7 @@ def my_shelf_page() -> None:
         return
     
     apply_theme()
-    shelf_header()
+    render_header(current_path='/my_shelf')
 
     user_shelf = get_user_shelf(user_id=app.storage.user.get("user_id"))
 
@@ -27,7 +28,7 @@ def my_shelf_page() -> None:
         filtered_shelf = filter_user_shelf(shelf=user_shelf, query=query, state=state, genre=genre)
         render_shelf.refresh(user_shelf=filtered_shelf)
 
-    with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center'):
+    with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
         with ui.row().classes('w-full items-center gap-4 justify-between sm:ml-20 sm:pr-20'):
             ui.label("Your shelf:").classes('text-2xl text-slate-700 text text-bold')
             submit_button(text="Add book", on_click=lambda: ui.navigate.to('search')).classes(remove='w-full shadow')
@@ -58,3 +59,5 @@ def my_shelf_page() -> None:
                 ).classes(remove="w-full", add="flex-1 sm:w-44")
 
         render_shelf(user_shelf=user_shelf, page=1, books_per_page=9)
+
+    render_mobile_bottom_bar(current_path='/my_shelf')

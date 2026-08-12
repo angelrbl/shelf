@@ -5,7 +5,8 @@ from services import search_books
 from views.theme import apply_theme
 from views.components import (
     user_input,
-    shelf_header,
+    render_header,
+    render_mobile_bottom_bar,
     render_books,
     submit_button
 )
@@ -17,9 +18,9 @@ def book_search() -> None:
             return
         
     apply_theme()
-    shelf_header()
+    render_header(current_path='/search')
 
-    with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-6'):
+    with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-6 pb-28 sm:pb-4'):
         query_value = app.storage.user.pop('current_search_query', None)
 
         def handle_search(search_query: str, max_results: int = 5, google_only: bool = False):
@@ -50,3 +51,5 @@ def book_search() -> None:
             ui.label("Can't find your books?,").classes('text-lg text-slate-700')
             ui.label("search globally.").on('click', lambda:handle_search(search_query=search_input.value, max_results=10, google_only=True)).classes('text-lg text-slate-700'
             ' hover:text-slate-500 transition-colors cursor-pointer text-bold')
+
+    render_mobile_bottom_bar(current_path='/search')
