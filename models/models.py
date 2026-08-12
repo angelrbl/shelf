@@ -66,6 +66,9 @@ class UserBook(Base):
     rating: Mapped[Optional[int]] = mapped_column()
     note: Mapped[Optional[str]] = mapped_column(Text)
 
+    top_shelf_rank: Mapped[Optional[int]] = mapped_column()
+    top_wished_rank: Mapped[Optional[int]] = mapped_column()
+
     user: Mapped[User] = relationship("User", back_populates="user_books")
     book: Mapped[Book] = relationship("Book", back_populates="user_books")
 

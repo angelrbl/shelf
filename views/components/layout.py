@@ -3,6 +3,7 @@ from nicegui import ui, app
 NAV_ITEMS = [
     {'label': 'My Shelf', 'icon': 'dashboard', 'path': '/my_shelf'},
     {'label': 'Search', 'icon': 'search', 'path': '/search'},
+    {'label': 'Profile', 'icon': 'person', 'path': '/profile'},
 ]
 
 def render_header(current_path: str) -> None:

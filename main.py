@@ -7,6 +7,7 @@ init_db()
 import views.pages.login
 import views.pages.my_shelf
 import views.pages.book_search
+import views.pages.profile
 
 @ui.page('/')
 def index() -> None:

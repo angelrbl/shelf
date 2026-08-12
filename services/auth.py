@@ -49,3 +49,10 @@ def delete_user(user_id: int, password: str) -> bool:
         session.commit()
 
         return True
+
+def get_user_by_id(user_id: int) -> User | None:
+    if not user_id:
+        return None
+
+    with get_session() as session:
+        return session.get(User, user_id)
