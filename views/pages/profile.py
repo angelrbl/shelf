@@ -6,7 +6,8 @@ from views.theme import apply_theme
 from views.components import (
     render_header,
     render_mobile_bottom_bar,
-    icon_button
+    icon_button,
+    render_general_stats
 )
 
 @ui.page('/profile')
@@ -27,5 +28,8 @@ def profile_page() -> None:
             icon_button(icon='settings', color='slate-500', on_click=lambda: ui.notify("Opening settings!", type="positive"), tooltip="Open settings").classes('text-lg')
 
             ui.separator().classes('w-full')
+
+        render_general_stats(user_id=user.id)
+
 
     render_mobile_bottom_bar(current_path='/profile')

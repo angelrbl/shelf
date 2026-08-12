@@ -2,6 +2,7 @@ from views.components.core import user_input, submit_button, icon_button, user_s
 from views.components.layout import render_header, render_mobile_bottom_bar
 from views.components.books import render_books
 from views.components.shelf import render_shelf
+from views.components.stats import render_general_stats
 
 __all__ = [
     "user_input",
@@ -11,5 +12,6 @@ __all__ = [
     "render_header",
     "render_mobile_bottom_bar",
     "render_books",
-    "render_shelf"
+    "render_shelf",
+    "render_general_stats"
 ]
