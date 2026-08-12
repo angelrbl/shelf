@@ -13,7 +13,7 @@ def add_book(
         end_date: date | None = None,
         rating: int | None = None,
         note: str | None = None
-) -> None:
+) -> UserBook:
     with get_session() as session:
         if start_date and end_date:
             if start_date > end_date:
@@ -35,15 +35,13 @@ def add_book(
         )
         existing_link = session.scalars(stmt_exist_link).first()
         if existing_link:
-            update_user_book(
-                user_id=user_id,
-                book_id=book.id,
-                state=state,
-                start_date=start_date,
-                end_date=end_date,
-                rating=rating,
-                note=note
-            )
+            existing_link.state = state
+            existing_link.start_date = start_date
+            existing_link.end_date = end_date
+            existing_link.rating = rating
+            existing_link.note = note
+
+            user_book = existing_link
         else:
             user_book = UserBook(
                 user_id=user_id,
@@ -56,6 +54,9 @@ def add_book(
             )
             session.add(user_book)
         session.commit()
+
+        session.refresh(user_book)
+        return user_book
 
 def remove_book(user_id: int, book_id: int) -> None:
     with get_session() as session:
@@ -154,3 +155,14 @@ def get_user_book_by_google_id(user_id: int, google_book_id: str) -> None:
             )
         )
         return session.scalars(stmt).first()
+
+if __name__ == "__main__":
+    from services import search_books
+    book = search_books(query='1984 George Orwell')[0]
+
+    add_book(user_id=1, book=book, state=BookState.READ)
+    print(f"Successfully added {book} to angel's library.")
+
+    user_shelf = get_user_shelf(user_id=1)
+    for user_book in user_shelf:
+        print("User book: ", user_book)
