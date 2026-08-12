@@ -1,12 +1,12 @@
 from nicegui import ui, app
 
-from models import User
 from services import get_user_by_id
 
 from views.theme import apply_theme
 from views.components import (
     render_header,
-    render_mobile_bottom_bar
+    render_mobile_bottom_bar,
+    icon_button
 )
 
 @ui.page('/profile')
@@ -24,6 +24,8 @@ def profile_page() -> None:
         with ui.row().classes('w-full justify-between items-center'):
             ui.label(f"@{user.username}").classes("text-3xl text-slate-700 font-bold")
 
-        ui.separator()
+            icon_button(icon='settings', color='slate-500', on_click=lambda: ui.notify("Opening settings!", type="positive"), tooltip="Open settings").classes('text-lg')
+
+            ui.separator().classes('w-full')
 
     render_mobile_bottom_bar(current_path='/profile')
