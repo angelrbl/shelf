@@ -5,7 +5,7 @@ from models import UserBook
 
 from views.theme import STATE_COLORS
 from views.components.core import section_title
-from views.components.books import book_dialog
+from views.components.book_dialog import book_dialog
 
 def user_book_card(user_book: UserBook) -> None:
     user_id = user_book.user_id
