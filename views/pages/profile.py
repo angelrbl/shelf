@@ -1,13 +1,14 @@
 from nicegui import ui, app
 
-from services import get_user_by_id
+from services import get_user_by_id, get_currently_reading_book
 
 from views.theme import apply_theme
 from views.components import (
     render_header,
     render_mobile_bottom_bar,
     icon_button,
-    render_general_stats
+    render_general_stats,
+    render_currently_reading
 )
 
 @ui.page('/profile')
@@ -30,6 +31,8 @@ def profile_page() -> None:
             ui.separator().classes('w-full')
 
         render_general_stats(user_id=user.id)
+
+        render_currently_reading(user_id=user.id, currently_reading_book=get_currently_reading_book(user_id=user.id))
 
 
     render_mobile_bottom_bar(current_path='/profile')

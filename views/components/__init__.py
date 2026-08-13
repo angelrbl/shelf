@@ -1,7 +1,7 @@
-from views.components.core import user_input, submit_button, icon_button, user_select
+from views.components.core import user_input, submit_button, icon_button, user_select, section_title
 from views.components.layout import render_header, render_mobile_bottom_bar
 from views.components.books import render_books
-from views.components.shelf import render_shelf
+from views.components.shelf import render_shelf, render_currently_reading
 from views.components.stats import render_general_stats
 
 __all__ = [
@@ -9,9 +9,11 @@ __all__ = [
     "submit_button",
     "icon_button",
     "user_select",
+    "section_title",
     "render_header",
     "render_mobile_bottom_bar",
     "render_books",
     "render_shelf",
+    "render_currently_reading",
     "render_general_stats"
 ]

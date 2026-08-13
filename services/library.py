@@ -143,7 +143,29 @@ def get_unique_shelf_genres(shelf: list[UserBook]) -> list[str]:
 
     return sorted(list(unique_genres))
 
-def get_user_book_by_google_id(user_id: int, google_book_id: str) -> None:
+def get_currently_reading_book(user_id: int) -> UserBook | None:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.state == BookState.READING
+            )
+            .order_by(UserBook.start_date.desc())
+            .options(joinedload(UserBook.book))
+        )
+        return session.scalars(stmt).first()
+
+def get_user_book(user_id: int, book_id: int) -> UserBook | None:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .options(joinedload(UserBook.book))
+            .where(UserBook.user_id == user_id, UserBook.book_id == book_id)
+        )
+        return session.scalars(stmt).first()
+
+def get_user_book_by_google_id(user_id: int, google_book_id: str) -> UserBook| None:
     with get_session() as session:
         stmt = (
             select(UserBook)
