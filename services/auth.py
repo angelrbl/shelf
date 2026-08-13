@@ -56,3 +56,8 @@ def get_user_by_id(user_id: int) -> User | None:
 
     with get_session() as session:
         return session.get(User, user_id)
+
+def get_user_by_username(username: str) -> User | None:
+    with get_session() as session:
+        stmt = select(User).where(User.username == username)
+        return session.scalar(stmt)
