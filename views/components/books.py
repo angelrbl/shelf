@@ -4,7 +4,7 @@ from typing import Optional
 from nicegui import ui, app
 
 from models import Book, BookState, UserBook
-from services import get_user_book_by_google_id, add_book, remove_book, get_user_shelf
+from services import get_user_book_by_google_id, get_user_book, add_book, remove_book, get_user_shelf
 
 from views.theme import STATE_COLORS
 from views.components.core import submit_button, user_select, icon_button
@@ -219,6 +219,9 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
             ).classes('w-full mt-4 py-2 rounded-lg shadow-sm font-bold')
 
 def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False) -> None:
+    if not current_user_book:
+        current_user_book = get_user_book(user_id=user_id, book_id=book.id)
+
     is_on_shelf = current_user_book is not None
     initial_state = "form" if start_on_form else "info"
 

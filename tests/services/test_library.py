@@ -19,6 +19,17 @@ def get_sample_book():
         page_count = "311"
     )
 
+def get_another_sample_book():
+    return Book(
+        google_book_id = "123456ABCDEF",
+        title = "El Extranjero",
+        author = "Albert Camus",
+        cover_url = None,
+        description = "An indifferent man judged for his world vision",
+        genres = "fiction, philosphy",
+        page_count = "120"
+    )
+
 @pytest.fixture
 def db_session(monkeypatch):
     engine = create_engine('sqlite:///:memory:')
@@ -125,6 +136,42 @@ def test_remove_book(db_session):
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     assert len(user_shelf) == 0
+
+def test_get_currently_reading_book(db_session):
+    user = User(username="therealbookgoat", password="iswearleeistop")
+    db_session.add(user)
+    db_session.commit()
+
+    assert library.get_currently_reading_book(user_id=user.id) is None
+
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 19))
+    assert library.get_currently_reading_book(user_id=user.id) is None
+
+    user_shelf = library.get_user_shelf(user_id=user.id)
+    book_id = user_shelf[0].book_id
+    library.update_book_state(user_id=user.id, book_id=book_id, new_state=BookState.READING)
+    assert library.get_currently_reading_book(user_id=user.id) is not None
+    assert library.get_currently_reading_book(user_id=user.id).book_id == book_id
+
+    another_book = get_another_sample_book()
+    library.add_book(user_id=user.id, book=another_book, state=BookState.READ, start_date=date(2026, 4, 19))
+    assert library.get_currently_reading_book(user_id=user.id).book_id == book_id
+
+def test_get_user_book(db_session):
+    user = User(username="santiposteguillo345", password="itsmelee")
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ)
+
+    user_shelf = library.get_user_shelf(user_id=user.id)
+    book_id = user_shelf[0].book_id
+
+    assert library.get_user_book(user_id=user.id, book_id=book_id) is not None
+    assert library.get_user_book(user_id=user.id, book_id=book_id).book_id == book_id
+    assert library.get_user_book(user_id=user.id, book_id=(book_id + 1)) is None
 
 def test_get_user_book_by_google_id(db_session):
     user = User(username="mysoulisreading", password="leewssupgng")
