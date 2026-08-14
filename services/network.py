@@ -56,7 +56,7 @@ def get_follower_count(user_id: int) -> int:
 
         return session.scalar(stmt)
 
-def get_followed_count(user_id: int) -> int:
+def get_following_count(user_id: int) -> int:
     with get_session() as session:
         stmt = (
             select(func.count())

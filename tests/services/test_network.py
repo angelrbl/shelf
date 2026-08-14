@@ -166,6 +166,6 @@ def test_get_followed_and_follower_count(db_session):
     network.follow_user(user_b.id, user_a.id)
 
     assert network.get_follower_count(user_a.id) == 1
-    assert network.get_followed_count(user_a.id) == 0
-    assert network.get_followed_count(user_b.id) == 1
+    assert network.get_following_count(user_a.id) == 0
+    assert network.get_following_count(user_b.id) == 1
     assert network.get_follower_count(user_b.id) == 0
