@@ -1,18 +1,67 @@
-from core import get_session
-from models import User
+from sqlalchemy import select, delete, func
 
-def are_mutual_friends(user_a_id: int, user_b_id: int) -> bool:
-    if user_a_id == user_b_id:
+from core import get_session
+from models import User, Follow
+
+def follow_user(current_user_id: int, target_user_id: int) -> None:
+    if current_user_id == target_user_id:
+        return
+    
+    with get_session() as session:
+        is_following = session.scalar(
+            select(Follow)
+            .where(Follow.follower_id == current_user_id, Follow.followed_id == target_user_id)
+        )
+
+        if not is_following:
+            new_follow = Follow(follower_id=current_user_id, followed_id=target_user_id)
+            session.add(new_follow)
+            session.commit()
+
+def unfollow_user(current_user_id: int, target_user_id: int) -> None:
+    if current_user_id == target_user_id:
+        return
+    
+    with get_session() as session:
+        stmt = (
+            delete(Follow)
+            .where(Follow.follower_id == current_user_id, Follow.followed_id == target_user_id)
+        )
+        session.execute(stmt)
+        session.commit()
+
+def is_following(current_user_id: int, target_user_id: int) -> bool:
+    if current_user_id == target_user_id:
         return False
 
     with get_session() as session:
-        user_a = session.get(User, user_a_id)
-        user_b = session.get(User, user_b_id)
+        stmt = (
+            select(Follow)
+            .where(Follow.follower_id == current_user_id, Follow.followed_id == target_user_id)
+        )
+        follow = session.scalar(stmt)
 
-        if not user_a or not user_b:
-            return False
+        return True if follow else False
 
-        a_follows_b = user_b in user_a.following
-        b_follows_a = user_b in user_a.followers
+def are_mutual_friends(current_user_id: int, target_user_id: int) -> bool:
+    return is_following(current_user_id, target_user_id) and is_following(target_user_id, current_user_id)
 
-        return a_follows_b and b_follows_a
+def get_follower_count(user_id: int) -> int:
+    with get_session() as session:
+        stmt = (
+            select(func.count())
+            .select_from(Follow)
+            .where(Follow.followed_id == user_id)
+        )
+
+        return session.scalar(stmt)
+
+def get_followed_count(user_id: int) -> int:
+    with get_session() as session:
+        stmt = (
+            select(func.count())
+            .select_from(Follow)
+            .where(Follow.follower_id == user_id)
+        )
+
+        return session.scalar(stmt)

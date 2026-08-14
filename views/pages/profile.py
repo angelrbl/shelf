@@ -37,7 +37,7 @@ def profile_page(username: str | None = None) -> None:
         profile_user = get_user_by_username(username=username)
         is_owner = False
         if profile_user:
-            is_friend = are_mutual_friends(user_a_id=current_user.id, user_b_id=profile_user.id)
+            is_friend = are_mutual_friends(current_user_id=current_user.id, target_user_id=profile_user.id)
 
     render_header(current_path=f'/{'profile' if is_owner else 'search'}')
 
