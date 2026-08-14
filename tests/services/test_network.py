@@ -155,6 +155,23 @@ def test_are_mutual_friends_invalid_user(db_session):
 
     assert network.are_mutual_friends(user_a.id, (user_a.id+1)) is False
 
+def test_get_follower_following_friends(db_session):
+    user_a = User(username="__julesverne", password="80daysrenough")
+    user_b = User(username="shakespeare_26", password="toliveornottolive")
+
+    db_session.add(user_a)
+    db_session.add(user_b)
+    db_session.commit()
+
+    network.follow_user(user_a.id, user_b.id)
+    network.follow_user(user_b.id, user_a.id)
+
+    assert network.get_followers(user_a.id)[0].username == "shakespeare_26"
+    assert network.get_following(user_a.id)[0].username == "shakespeare_26"
+    assert network.get_friends(user_a.id)[0].username == "shakespeare_26"
+    assert network.get_friends(user_id=(user_b.id + 10)) == []
+    
+
 def test_get_followed_and_follower_count(db_session):
     user_a = User(username="sherlokholmes_91", password="iamadetective")
     user_b = User(username="agathacristie", password="iamnotscared")

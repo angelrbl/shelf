@@ -46,6 +46,33 @@ def is_following(current_user_id: int, target_user_id: int) -> bool:
 def are_mutual_friends(current_user_id: int, target_user_id: int) -> bool:
     return is_following(current_user_id, target_user_id) and is_following(target_user_id, current_user_id)
 
+def get_followers(user_id: int) -> list[User]:
+    with get_session() as session:
+        user = session.get(User, user_id)
+
+        if not user:
+            return []
+        
+        return list(user.followers)
+
+def get_following(user_id: int) -> list[User]:
+    with get_session() as session:
+        user = session.get(User, user_id)
+
+        if not user:
+            return []
+        
+        return list(user.following)
+
+def get_friends(user_id: int) -> list[User]:
+    with get_session() as session:
+        user = session.get(User, user_id)
+
+        if not user:
+            return []
+
+        return list(set(user.followers) & set(user.following))
+    
 def get_follower_count(user_id: int) -> int:
     with get_session() as session:
         stmt = (

@@ -45,7 +45,11 @@ def render_profile_body(current_user: User, requested_username: str | None):
                     profile_user.privacy_settings.get("follows") == SettingsPrivacy.PUBLIC or
                     (profile_user.privacy_settings.get("follows") == SettingsPrivacy.FRIENDS and is_friend)
                 )
-                render_follows(user_id=profile_user.id, can_see_follows=can_see_follows)
+                render_follows(
+                    profile_user_id=profile_user.id,
+                    current_user_id=current_user.id,
+                    can_see_follows=can_see_follows
+                )
 
             with ui.row().classes('sm:pt-3 sm:pr-1'):
                 if is_owner:
