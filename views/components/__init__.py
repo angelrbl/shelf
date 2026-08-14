@@ -4,6 +4,7 @@ from views.components.books import render_books
 from views.components.shelf import render_shelf, render_currently_reading
 from views.components.stats import render_general_stats
 from views.components.network import render_follow_button
+from views.components.profile import render_profile_body
 
 __all__ = [
     "user_input",
@@ -17,5 +18,6 @@ __all__ = [
     "render_shelf",
     "render_currently_reading",
     "render_general_stats",
-    "render_follow_button"
+    "render_follow_button",
+    "render_profile_body"
 ]
