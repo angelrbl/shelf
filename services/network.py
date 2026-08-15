@@ -97,3 +97,12 @@ def filter_users(users: list[User], query: str | None = None):
     clean_query = query.strip().lower() if query else ""
 
     return [user for user in users if clean_query in user.username.strip().lower()]
+
+def search_users(query: str | None = None, max_results: int = 10) -> list[User]:
+    if not query:
+        return []
+
+    with get_session() as session:
+        stmt = select(User).where(User.username.icontains(query)).limit(max_results)
+
+        return list(session.scalars(stmt).all())

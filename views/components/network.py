@@ -116,9 +116,9 @@ def render_user_list(users: list[User], current_user_id: int, dialog: ui.dialog,
         def user_list(users: list[User]):
             with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56'):
                 for user in users:
-                    with ui.row().classes('w-full items-center justify-between p-4 rounded-xl hover:bg-slate-50'):
+                    with ui.row().classes('w-full items-center justify-between p-4 rounded-xl group hover:bg-slate-50'):
                         with ui.column().classes("cursor-pointer").on("click", lambda _, u=user: (dialog.close(), ui.navigate.to(f'/profile/{u.username}'))):
-                            ui.label(f"@{user.username}").classes('text-xl font-bold text-slate-700')
+                            ui.label(f"@{user.username}").classes('group-hover:text-slate-900 text-xl font-bold text-slate-700')
                         if user.id != current_user_id:
                             render_follow_button(
                                 current_user_id=current_user_id,
@@ -183,3 +183,33 @@ def follow_dialog(profile_user_id: int, current_user_id: int, start_on_followers
             dynamic_tab_content(tab_value=initial_tab)
             
     dialog.open()
+
+@ui.refreshable
+def render_search_users(users: list[User], user_id: int) -> None:
+    if not users:
+        return
+
+    with ui.column().classes('w-full mt-4 sm:mb-2 gap-3 ml-10 pr-20'):
+        ui.label("Users").classes('text-xl font-bold text-slate-700 pl-2')
+
+        with ui.row().classes('w-full overflow-x-auto flex-nowrap gap-4 md:gap-6 pb-4 snap-x p-0 items-stretch'):
+            for user in users:
+                with ui.card().classes(
+                    'w-32 sm:w-48 flex-shrink-0 flex flex-col justify-between items-center '
+                    'p-4 snap-center shadow-sm rounded-2xl gap-2'):
+
+                    (
+                        ui.label(f"@{user.username}")
+                        .classes('font-bold text-slate-700 cursor-pointer truncate w-full text-center text-md sm:text-lg hover:text-slate-900')
+                        .on('click', lambda _, u=user: ui.navigate.to(f'/profile/{u.username}'))
+                    )
+                    with ui.row().classes('w-full justify-center scale-90 sm:scale-100'):
+                        if user.id != user_id:
+                            render_follow_button(
+                                current_user_id=user_id,
+                                target_user_id=user.id,
+                                is_friend=are_mutual_friends(current_user_id=user_id, target_user_id=user.id),
+                                on_change=None
+                            )
+                        else:
+                            ui.label("").classes('h-8')
