@@ -13,7 +13,7 @@ from views.components import (
 )
 
 @ui.page('/search')
-def search() -> None:
+def search_page() -> None:
     user_id = app.storage.user.get('user_id')
 
     if not user_id:

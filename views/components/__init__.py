@@ -5,6 +5,7 @@ from views.components.shelf import render_shelf, render_currently_reading
 from views.components.stats import render_general_stats
 from views.components.network import render_follow_button, render_follows, render_search_users
 from views.components.profile import render_profile_body
+from views.components.settings import render_privacy_settings
 
 __all__ = [
     "user_input",
@@ -22,4 +23,5 @@ __all__ = [
     "render_follows",
     "render_search_users",
     "render_profile_body",
+    "render_privacy_settings"
 ]

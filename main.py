@@ -8,6 +8,7 @@ import views.pages.login
 import views.pages.my_shelf
 import views.pages.search
 import views.pages.profile
+import views.pages.settings
 
 @ui.page('/')
 def index() -> None:
