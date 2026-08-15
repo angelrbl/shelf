@@ -1,5 +1,6 @@
 import math
 from nicegui import ui, app
+from typing import Callable
 
 from models import Book, BookState, UserBook
 from services import get_user_book_by_google_id
@@ -30,7 +31,7 @@ def book_card(book: Book) -> None:
                         ui.badge(genre.title()).classes('p-1.75').props('rounded')
 
 @ui.refreshable
-def render_books(books: list, page: int = 1, books_per_page: int = 10) -> None:
+def render_books(books: list, page: int = 1, books_per_page: int = 10, on_search: Callable | None = None) -> None:
     if not books:
         return
 
@@ -44,15 +45,23 @@ def render_books(books: list, page: int = 1, books_per_page: int = 10) -> None:
 
     books_for_current_page = books[start_idx:end_idx]
 
-    with ui.grid().classes('w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 p-10 pt-0'):
-        for book in books_for_current_page:
-            book_card(book=book)
+    with ui.column().classes('w-full gap-3'):
+        ui.label("Books").classes('ml-10 pr-20 text-xl font-bold text-slate-700 mt-2 pl-2')
 
-    if total_pages > 1:
-        with ui.row().classes('w-full justify-center mt-8 mb-2'):
-            ui.pagination(
-                min=1,
-                max=total_pages,
-                value=page,
-                on_change=lambda e: render_books.refresh(books=books, page=e.value, books_per_page=books_per_page)
-            ).props('rounded color=slate-7')
+        with ui.grid().classes('w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 p-10 pt-0'):
+            for book in books_for_current_page:
+                book_card(book=book)
+
+        if total_pages > 1:
+            with ui.row().classes('w-full justify-center mt-8 mb-2'):
+                ui.pagination(
+                    min=1,
+                    max=total_pages,
+                    value=page,
+                    on_change=lambda e: render_books.refresh(books=books, page=e.value, books_per_page=books_per_page)
+                ).props('rounded color=slate-7')
+
+        with ui.row().classes('w-full items-center gap-1 justify-center mb-10'):
+            ui.label("Can't find your books?,").classes('text-lg text-slate-700')
+            ui.label("search globally.").on('click', on_search).classes('text-lg text-slate-700'
+            ' hover:text-slate-500 transition-colors cursor-pointer text-bold')

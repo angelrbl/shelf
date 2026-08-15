@@ -3,10 +3,24 @@ from typing import Optional
 from enum import Enum
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from sqlalchemy import String, Text, ForeignKey, Date, UniqueConstraint
+from sqlalchemy import String, Text, ForeignKey, Date, UniqueConstraint, JSON
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core import Base
+
+class SettingsPrivacy(str, Enum):
+    PUBLIC = "public"
+    FRIENDS = "friends"
+    PRIVATE = "private"
+
+DEFAULT_PRIVACY = {
+    'follows': SettingsPrivacy.PUBLIC.value,
+    'general_stats': SettingsPrivacy.PUBLIC.value,
+    'reading': SettingsPrivacy.PUBLIC.value,
+    'top_shelf': SettingsPrivacy.PUBLIC.value,
+    'top_wished': SettingsPrivacy.PUBLIC.value,
+    'stats': SettingsPrivacy.PRIVATE.value
+}
 
 class BookState(Enum):
     WISHED = "wished"
@@ -21,7 +35,25 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(30), unique=True)
     password_hash: Mapped[str] = mapped_column()
 
+    privacy_settings: Mapped[dict[str, str]] = mapped_column(JSON, default=lambda: DEFAULT_PRIVACY)
+
     user_books: Mapped[list["UserBook"]] = relationship("UserBook", back_populates="user", cascade="all, delete-orphan")
+
+    following: Mapped[list["User"]] = relationship(
+        "User",
+        secondary="follows",
+        primaryjoin="User.id == Follow.follower_id",
+        secondaryjoin="User.id == Follow.followed_id",
+        back_populates="followers"
+    )
+
+    followers: Mapped[list["User"]] = relationship(
+        "User",
+        secondary="follows",
+        primaryjoin="User.id == Follow.followed_id",
+        secondaryjoin="User.id == Follow.follower_id",
+        back_populates="following"
+    )
 
     @property
     def password(self):
@@ -78,3 +110,8 @@ class UserBook(Base):
     __table_args__ = (
         UniqueConstraint('user_id', 'book_id', name='uix_user_book'),
     )
+
+class Follow(Base):
+    __tablename__ = "follows"
+    follower_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete='CASCADE'), primary_key=True)
+    followed_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete='CASCADE'), primary_key=True)

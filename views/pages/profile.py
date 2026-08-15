@@ -1,38 +1,25 @@
 from nicegui import ui, app
 
-from services import get_user_by_id, get_currently_reading_book
+from services import get_user_by_id
 
 from views.theme import apply_theme
-from views.components import (
-    render_header,
-    render_mobile_bottom_bar,
-    icon_button,
-    render_general_stats,
-    render_currently_reading
-)
+from views.components import render_header, render_mobile_bottom_bar, render_profile_body
 
 @ui.page('/profile')
-def profile_page() -> None:
-    if not app.storage.user.get('user_id'):
+@ui.page('/profile/{username}')
+def profile_page(username: str | None = None) -> None:
+    current_user_id = app.storage.user.get('user_id')
+    current_user = get_user_by_id(current_user_id)
+
+    if not current_user_id or not current_user:
         ui.navigate.to('/login')
         return
 
     apply_theme()
-    render_header(current_path='/profile')
 
-    user = get_user_by_id(user_id=app.storage.user.get("user_id"))
+    is_my_profile = username is None or username == current_user.username
+    render_header(current_path=f'/{'profile' if is_my_profile else 'search'}')
 
-    with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
-        with ui.row().classes('w-full justify-between items-center'):
-            ui.label(f"@{user.username}").classes("text-3xl text-slate-700 font-bold")
-
-            icon_button(icon='settings', color='slate-500', on_click=lambda: ui.notify("Opening settings!", type="positive"), tooltip="Open settings").classes('text-lg')
-
-            ui.separator().classes('w-full')
-
-        render_general_stats(user_id=user.id)
-
-        render_currently_reading(user_id=user.id, currently_reading_book=get_currently_reading_book(user_id=user.id))
-
-
-    render_mobile_bottom_bar(current_path='/profile')
+    render_profile_body(current_user=current_user, requested_username=username)
+    
+    render_mobile_bottom_bar(current_path=f'/{'profile' if is_my_profile else 'search'}')
