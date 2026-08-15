@@ -13,10 +13,11 @@ from services import (
     get_follower_count,
     get_following_count,
     are_mutual_friends,
-    get_user_by_id
+    get_user_by_id,
+    filter_users
 )
 
-from views.components.core import submit_button, icon_button
+from views.components.core import submit_button, icon_button, user_input
 
 def render_follow_button(current_user_id: int, target_user_id: int, is_friend: bool, on_change: Callable = None) -> None:
     is_already_following = is_following(current_user_id=current_user_id, target_user_id=target_user_id)
@@ -98,24 +99,41 @@ def render_user_list(users: list[User], current_user_id: int, dialog: ui.dialog,
         with ui.card().classes('w-full justify-center items-center h-48 sm:h-56 shadow-none'):
             ui.label('Nothing here yet...').classes('w-full text-lg text-center text-slate-500')
     else:
-        with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56'):
-            for user in users:
-                with ui.row().classes('w-full items-center justify-between p-4 rounded-xl hover:bg-slate-50'):
-                    with ui.column().classes("cursor-pointer").on("click", lambda _, u=user: (dialog.close, ui.navigate.to(f'/profile/{u.username}'))):
-                        ui.label(f"@{user.username}").classes('text-lg font-bold text-slate-700')
-                    if user.id != current_user_id:
-                        render_follow_button(
-                            current_user_id=current_user_id,
-                            target_user_id=user.id,
-                            is_friend=are_mutual_friends(current_user_id=current_user_id, target_user_id=user.id),
-                            on_change=on_status_change
-                        )
+        def handle_filter_users(users: list[User], query: str | None = None):
+            filtered_users = filter_users(users=users, query=query)
+            user_list.refresh(users=filtered_users)
+
+        with ui.row().classes('w-full items-center justify-between'):
+            query = (
+                user_input(label="Search users", icon="search")
+                .on('keydown.enter', lambda: handle_filter_users(users=users, query=query.value))
+                .on('blur', lambda: handle_filter_users(users=users, query=query.value))
+                .classes("sm:flex-1")
+                .props(remove="outlined", add="clearable")
+            )
+
+        @ui.refreshable
+        def user_list(users: list[User]):
+            with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56'):
+                for user in users:
+                    with ui.row().classes('w-full items-center justify-between p-4 rounded-xl hover:bg-slate-50'):
+                        with ui.column().classes("cursor-pointer").on("click", lambda _, u=user: (dialog.close(), ui.navigate.to(f'/profile/{u.username}'))):
+                            ui.label(f"@{user.username}").classes('text-xl font-bold text-slate-700')
+                        if user.id != current_user_id:
+                            render_follow_button(
+                                current_user_id=current_user_id,
+                                target_user_id=user.id,
+                                is_friend=are_mutual_friends(current_user_id=current_user_id, target_user_id=user.id),
+                                on_change=on_status_change
+                            )
+
+        user_list(users=users)
 
 def follow_dialog(profile_user_id: int, current_user_id: int, start_on_followers: bool) -> None:
     profile_user = get_user_by_id(user_id=profile_user_id)
 
-    with ui.dialog().classes('items-center').on('keydown.escpae', lambda: dialog.close()) as dialog:
-        with ui.card().classes('w-full max-w-lg p-6 flex flex-col gap-4 '
+    with ui.dialog().classes('items-center').on('keydown.escape', lambda: dialog.close()) as dialog:
+        with ui.card().classes('w-full max-w-lg p-6 flex flex-col '
             'my-auto max-h-[85vh] rounded-2xl'):
 
             with ui.row().classes('w-full items-center justify-between mb-2'):

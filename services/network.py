@@ -92,3 +92,8 @@ def get_following_count(user_id: int) -> int:
         )
 
         return session.scalar(stmt)
+
+def filter_users(users: list[User], query: str | None = None):
+    clean_query = query.strip().lower() if query else ""
+
+    return [user for user in users if clean_query in user.username.strip().lower()]

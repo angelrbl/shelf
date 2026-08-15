@@ -22,7 +22,8 @@ from services.network import (
     get_following,
     get_friends,
     get_following_count,
-    get_follower_count
+    get_follower_count,
+    filter_users
 )
 
 __all__ = [
@@ -53,5 +54,6 @@ __all__ = [
     "get_following",
     "get_friends",
     "get_following_count",
-    "get_follower_count"
+    "get_follower_count",
+    "filter_users"
 ]
