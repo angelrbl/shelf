@@ -2,6 +2,7 @@ import math
 from nicegui import ui
 
 from models import UserBook
+from services import get_user_shelf
 
 from views.theme import STATE_COLORS
 from views.components.core import section_title
@@ -11,7 +12,12 @@ def user_book_card(user_book: UserBook) -> None:
     user_id = user_book.user_id
     book = user_book.book
 
-    with ui.card().on("click", lambda: book_dialog(user_id=user_id, book=user_book.book, current_user_book=user_book, start_on_form=True)).classes(
+    with ui.card().on("click", lambda: book_dialog(
+        user_id=user_id,
+        book=user_book.book,
+        current_user_book=user_book,
+        start_on_form=True,
+        on_close=lambda:render_shelf.refresh(user_shelf=get_user_shelf(user_id=user_id)))).classes(
         'p-0 w-full h-full overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer flex flex-col'):
 
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain shrink-0')
