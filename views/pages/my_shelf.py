@@ -29,9 +29,13 @@ def my_shelf_page() -> None:
         render_shelf.refresh(user_shelf=filtered_shelf)
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
-        with ui.row().classes('w-full items-center gap-4 justify-between sm:ml-20 sm:pr-20'):
-            ui.label("Your shelf:").classes('text-2xl text-slate-700 text text-bold')
-            submit_button(text="Add book", on_click=lambda: ui.navigate.to('search')).classes(remove='w-full shadow')
+        with ui.row().classes('w-full justify-between items-end'):
+            ui.label(f"My shelf").classes("text-3xl text-slate-700 font-medium")
+            with ui.row().classes('items-center gap-1 cursor-pointer group').on('click', lambda: ui.navigate.to('/search')):
+                ui.icon("add").classes('text-slate-700 font-bold group-hover:text-slate-500')
+                ui.label("Add books").classes('text-slate-700 font-bold group-hover:text-slate-500')
+
+        ui.separator().classes('w-full mb-5')
 
         with ui.row().classes('w-full max-w-6xl items-center gap-3 flex-col sm:flex-row'):
             query = (

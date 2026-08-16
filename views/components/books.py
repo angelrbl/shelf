@@ -218,11 +218,11 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 on_click=handle_submit
             ).classes('w-full mt-4 py-2 rounded-lg shadow-sm font-bold')
 
-def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False) -> None:
+def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False, on_close: callable | None = None) -> None:
     is_on_shelf = current_user_book is not None
     initial_state = "form" if start_on_form else "info"
 
-    with ui.dialog().classes('items-end sm:items-center !mb-0') as dialog:
+    with ui.dialog().classes('items-end sm:items-center !mb-0').on('clickaway', lambda:ui.notify("aura")) as dialog:
         with ui.card().classes('w-full sm:max-w-3xl !pb-0 p-6 flex flex-col gap-4 '
             '!mb-0 mt-auto sm:!my-auto max-h-[95vh] sm:max-h-[85vh] '
             'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl'):
@@ -287,5 +287,8 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
                     )
 
             dynamic_dialog_content(state=initial_state, user_book=current_user_book)
+
+    if on_close:
+        dialog.on('hide', on_close)
 
     dialog.open()
