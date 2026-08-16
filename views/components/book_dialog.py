@@ -166,7 +166,7 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 on_click=handle_submit
             ).classes('w-full mt-4 py-2 rounded-lg shadow-sm font-bold')
 
-def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False) -> None:
+def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False, on_close: callable | None = None) -> None:
     if not current_user_book:
         current_user_book = get_user_book(user_id=user_id, book_id=book.id)
 
@@ -239,5 +239,8 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
                     )
 
             dynamic_dialog_content(state=initial_state, user_book=current_user_book)
+
+    if on_close:
+        dialog.on('hide', on_close)
 
     dialog.open()

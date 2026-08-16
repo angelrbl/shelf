@@ -25,7 +25,7 @@ def settings_page():
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-end'):
-            ui.label(f"Settings").classes("text-3xl text-slate-700 font-bold")
+            ui.label(f"Settings").classes("text-3xl text-slate-700 font-medium")
             with ui.row().classes('items-center gap-1 cursor-pointer group').on('click', lambda: ui.navigate.to('/profile')):
                 ui.icon("arrow_back").classes('text-slate-700 font-bold group-hover:text-slate-500')
                 ui.label("Go back").classes('text-slate-700 font-bold group-hover:text-slate-500')

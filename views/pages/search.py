@@ -24,6 +24,11 @@ def search_page() -> None:
     render_header(current_path='/search')
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-0 pb-28 sm:pb-4'):
+        with ui.row().classes('w-full justify-between items-end mb-5'):
+            ui.label(f"Search").classes("text-3xl text-slate-700 font-medium")
+                    
+        ui.separator().classes('w-full mb-5 sm:mb-10')
+        
         query_value = app.storage.user.pop('current_search_query', None)
 
         def handle_search(search_query: str, max_results: int = 5, google_only: bool = False):
