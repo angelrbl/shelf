@@ -4,7 +4,7 @@ from models import User, SettingsPrivacy
 
 from services import (
     get_user_by_id,
-    get_currently_reading_book,
+    get_currently_reading_books,
     get_user_by_username,
     are_mutual_friends
 )
@@ -80,4 +80,4 @@ def render_profile_body(current_user: User, requested_username: str | None):
         )
 
         if can_see_reading:
-            render_currently_reading(user_id=profile_user.id, currently_reading_book=get_currently_reading_book(user_id=profile_user.id))
+            render_currently_reading(user_id=profile_user.id, currently_reading_books=get_currently_reading_books(user_id=profile_user.id))

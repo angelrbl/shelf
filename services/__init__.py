@@ -7,7 +7,7 @@ from services.library import (
     get_user_shelf,
     filter_user_shelf,
     get_unique_shelf_genres,
-    get_currently_reading_book,
+    get_currently_reading_books,
     get_user_book,
     get_user_book_by_google_id
 )
@@ -37,7 +37,7 @@ __all__ = [
     "get_user_shelf",
     "filter_user_shelf",
     "get_unique_shelf_genres",
-    "get_currently_reading_book",
+    "get_currently_reading_books",
     "get_user_book",
     "get_user_book_by_google_id",
     "register_user",

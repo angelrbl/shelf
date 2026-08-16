@@ -142,21 +142,21 @@ def test_get_currently_reading_book(db_session):
     db_session.add(user)
     db_session.commit()
 
-    assert library.get_currently_reading_book(user_id=user.id) is None
+    assert library.get_currently_reading_books(user_id=user.id) is None
 
     book = get_sample_book()
     library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 19))
-    assert library.get_currently_reading_book(user_id=user.id) is None
+    assert library.get_currently_reading_books(user_id=user.id) is None
 
     user_shelf = library.get_user_shelf(user_id=user.id)
     book_id = user_shelf[0].book_id
     library.update_book_state(user_id=user.id, book_id=book_id, new_state=BookState.READING)
-    assert library.get_currently_reading_book(user_id=user.id) is not None
-    assert library.get_currently_reading_book(user_id=user.id).book_id == book_id
+    assert library.get_currently_reading_books(user_id=user.id) is not None
+    assert library.get_currently_reading_books(user_id=user.id).book_id == book_id
 
     another_book = get_another_sample_book()
     library.add_book(user_id=user.id, book=another_book, state=BookState.READ, start_date=date(2026, 4, 19))
-    assert library.get_currently_reading_book(user_id=user.id).book_id == book_id
+    assert library.get_currently_reading_books(user_id=user.id).book_id == book_id
 
 def test_get_user_book(db_session):
     user = User(username="santiposteguillo345", password="itsmelee")

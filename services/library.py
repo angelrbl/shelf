@@ -143,7 +143,7 @@ def get_unique_shelf_genres(shelf: list[UserBook]) -> list[str]:
 
     return sorted(list(unique_genres))
 
-def get_currently_reading_book(user_id: int) -> UserBook | None:
+def get_currently_reading_books(user_id: int, max_results: int = 3) -> list[UserBook] | None:
     with get_session() as session:
         stmt = (
             select(UserBook)
@@ -153,8 +153,9 @@ def get_currently_reading_book(user_id: int) -> UserBook | None:
             )
             .order_by(UserBook.start_date.desc())
             .options(joinedload(UserBook.book))
+            .limit(max_results)
         )
-        return session.scalars(stmt).first()
+        return list(session.scalars(stmt).all())
 
 def get_user_book(user_id: int, book_id: int) -> UserBook | None:
     with get_session() as session:

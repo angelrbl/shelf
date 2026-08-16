@@ -1,4 +1,4 @@
-from nicegui import ui
+from nicegui import ui, app
 
 from models import User
 from services import update_settings, get_user_by_username, update_username, update_password, delete_user
@@ -172,7 +172,6 @@ def update_password_dialog(user_id: int):
                 except ValueError as e:
                     ui.notify(str(e), type="negative")
                 
-                
     dialog.open()
 
 def delete_user_dialog(user_id: int):
@@ -199,7 +198,8 @@ def delete_user_dialog(user_id: int):
                     return
 
                 try:
-                    delete_user(user_id=user_id, )
+                    delete_user(user_id=user_id, password=password)
+                    app.storage.clear()
                     ui.notify("Account deleted successfully! Bye!", type="positive")
                     dialog.close()
                     ui.navigate.to('/')
