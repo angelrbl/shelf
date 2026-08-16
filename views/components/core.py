@@ -1,8 +1,8 @@
 from typing import Any
 from nicegui import ui
 
-def user_input(label: str, icon: str, password: bool=False, value:str | None = None) -> ui.input:
-    base_input = ui.input(label=label, password=password, value=value).classes('w-full').props('outlined')
+def user_input(label: str, icon: str, password: bool=False, password_toggle_button: bool=False, value:str | None = None) -> ui.input:
+    base_input = ui.input(label=label, password=password, value=value, password_toggle_button=password_toggle_button).classes('w-full').props('outlined')
     with base_input.add_slot('prepend'):
         ui.icon(icon)
     return base_input

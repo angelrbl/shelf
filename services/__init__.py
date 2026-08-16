@@ -11,7 +11,7 @@ from services.library import (
     get_user_book,
     get_user_book_by_google_id
 )
-from services.auth import register_user, authenticate_user, delete_user, get_user_by_id, get_user_by_username
+from services.auth import register_user, authenticate_user, delete_user, update_username, update_password, get_user_by_id, get_user_by_username
 from services.stats import total_read_books, average_book_rating, total_read_books_this_year
 from services.network import (
     follow_user,
@@ -24,7 +24,8 @@ from services.network import (
     get_following_count,
     get_follower_count,
     filter_users,
-    search_users
+    search_users,
+    update_settings
 )
 
 __all__ = [
@@ -42,6 +43,8 @@ __all__ = [
     "register_user",
     "authenticate_user",
     "delete_user",
+    "update_username",
+    "update_password",
     "get_user_by_id",
     "get_user_by_username",
     "total_read_books",
@@ -57,5 +60,6 @@ __all__ = [
     "get_following_count",
     "get_follower_count",
     "filter_users",
-    "search_users"
+    "search_users",
+    "update_settings"
 ]

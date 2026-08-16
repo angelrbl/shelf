@@ -53,7 +53,7 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
             with ui.row().classes('sm:pt-3 sm:pr-1'):
                 if is_owner:
-                    icon_button(icon='settings', color='slate-500', on_click=lambda: ui.notify("Opening settings!", type="positive"), tooltip="Open settings").classes('text-lg')
+                    icon_button(icon='settings', color='slate-500', on_click=lambda: ui.navigate.to('/settings'), tooltip="Open settings").classes('text-lg')
                 else:
                     render_follow_button(
                         current_user_id=current_user.id,

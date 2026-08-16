@@ -93,7 +93,7 @@ def get_following_count(user_id: int) -> int:
 
         return session.scalar(stmt)
 
-def filter_users(users: list[User], query: str | None = None):
+def filter_users(users: list[User], query: str | None = None) -> list[User]:
     clean_query = query.strip().lower() if query else ""
 
     return [user for user in users if clean_query in user.username.strip().lower()]
@@ -106,3 +106,13 @@ def search_users(query: str | None = None, max_results: int = 10) -> list[User]:
         stmt = select(User).where(User.username.icontains(query)).limit(max_results)
 
         return list(session.scalars(stmt).all())
+
+def update_settings(user_id: int, setting_key: str, new_value: str) -> None:
+    with get_session() as session:
+        user = session.get(User, user_id)
+        if not user:
+            return
+
+        user.privacy_settings = {**user.privacy_settings, setting_key: new_value}
+
+        session.commit()
