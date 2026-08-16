@@ -19,7 +19,7 @@ def login_page() -> None:
             # Log in tab
             with ui.tab_panel(login_tab):
                 login_user = user_input('User', icon='account_circle')
-                login_password = user_input('Password', icon='lock', password=True)
+                login_password = user_input('Password', icon='lock', password=True, password_toggle_button=True)
 
                 def handle_login():
                     try:
@@ -34,8 +34,8 @@ def login_page() -> None:
             # Register tab
             with ui.tab_panel(register_tab):
                 reg_user = user_input('User', icon='account_circle')
-                reg_password = user_input('Password', icon='lock', password=True)
-                reg_password_repeat = user_input('Repeat password', icon="password", password=True)
+                reg_password = user_input('Password', icon='lock', password=True, password_toggle_button=True)
+                reg_password_repeat = user_input('Repeat password', icon="password", password=True, password_toggle_button=True)
 
                 def handle_register():
                     if reg_password.value != reg_password_repeat.value:
