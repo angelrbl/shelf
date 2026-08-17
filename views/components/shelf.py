@@ -2,9 +2,9 @@ import math
 from nicegui import ui
 
 from models import UserBook, BookState
-from services import get_user_shelf, filter_user_shelf, get_unique_shelf_genres, update_top_shelf_rank
+from services import get_user_shelf, filter_user_shelf, get_unique_shelf_genres, update_top_shelf_rank, get_top_shelf
 
-from views.theme import STATE_COLORS
+from views.theme import STATE_COLORS, RANK_COLORS
 from views.components.core import section_title, user_input, user_select, icon_button
 from views.components.book_dialog import book_dialog
 
@@ -21,17 +21,17 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
             ui.space()
             
             with ui.row().classes('w-full mt-2 justify-between items-center'):
+                color_class = RANK_COLORS.get(rank, "text-slate-600")
                 if not rank:
                     current_state = user_book.state
                     color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
                     
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} p-1.75').props('rounded')
                 else:
-                    ui.label(f"#{rank}").classes("text-bold text-slate-600 text-bold text-xl")
+                    ui.label(f"#{rank}").classes(f"text-bold {color_class} text-bold text-xl")
                     
                 if user_book.rating:
-                    ui.label(f"{user_book.rating}/10").classes("text-bold text-slate-600 text-bold text-lg")
-
+                    ui.label(f"{user_book.rating}/10").classes(f"text-bold {color_class} text-bold text-lg")
 
 def add_book_card(on_click: callable) -> None:
     with ui.card().on('click', on_click).classes(
@@ -69,7 +69,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                     (
                                         ui.image(book.cover_url)
                                         .classes('w-32 h-44 sm:w-40 sm:h-56 object-cover rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-all')
-                                        .on("click", lambda: book_dialog(user_id=user_id, book=book))
+                                        .on("click", lambda: book_dialog(profile_user_id=user_id, book=book))
                                     )
                         
                                 with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
@@ -92,7 +92,8 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                             ui.icon('calendar_today').classes('text-lg')
                                             ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
 
-def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list[UserBook], on_add_book: callable, is_owner: bool=False, max_top_books: int = 5) -> None:
+@ui.refreshable
+def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list[UserBook], is_owner: bool=False, max_top_books: int = 5) -> None:
     top_shelf_by_rank = {user_book.top_shelf_rank: user_book for user_book in top_shelf if user_book.top_shelf_rank}
 
     with ui.column().classes('w-full max-w-4xl mx-auto gap-4 px-4'):
@@ -106,21 +107,36 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
                     if rank in top_shelf_by_rank:
                         user_book = top_shelf_by_rank[rank]
 
-                        with ui.column().classes('relative w-32 sm:w-40 h-[310px] sm:h-[370px] flex-shrink-0 snap-start ' 
+                        with ui.column().classes('relative w-32 sm:w-52 h-[230px] sm:h-[370px] flex-shrink-0 snap-start ' 
                             'cursor-pointer hover:-translate-y-1 transition-transform duration-300 gap-2'):
                             user_book_card(user_book=user_book, rank=rank, on_click=
                                 lambda u_book=user_book: book_dialog(
-                                user_id=current_user_id,
+                                profile_user_id=profile_user_id,
                                 book=u_book.book,
-                                current_user_book=u_book,
+                                profile_user_book=u_book,
                                 start_on_form=True,
-                                on_close=lambda:render_shelf.refresh(user_shelf=get_user_shelf(user_id=u_book.user_id))),
-                            )
+                                on_close=lambda: render_top_shelf.refresh(
+                                    current_user_id=current_user_id,
+                                    profile_user_id=profile_user_id,
+                                    top_shelf=get_top_shelf(user_id=profile_user_id)
+                                ),
+                                is_owner=is_owner,
+                                current_user_id=current_user_id
+                            ))
                             if is_owner:
+                                def handle_remove_top_shelf_book(book_id: int):
+                                    update_top_shelf_rank(user_id=current_user_id, book_id=book_id, new_top_shelf_rank=None)
+                                    ui.notify("Removed book from top shelf", type="positive")
+                                    render_top_shelf.refresh(
+                                        current_user_id=current_user_id,
+                                        profile_user_id=profile_user_id,
+                                        top_shelf=get_top_shelf(user_id=profile_user_id)
+                                    )
+
                                 icon_button(
                                     icon="close", 
                                     color="white", 
-                                    on_click=lambda bid=user_book.book_id: ui.notify("a"),
+                                    on_click=lambda bid=user_book.book_id: handle_remove_top_shelf_book(book_id=bid),
                                     tooltip="Remove book from top shelf"
                                 ).classes(
                                     'absolute top-2 right-2 bg-slate-900/60 hover:bg-red-600 '
@@ -128,9 +144,18 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
                                 ).props('dense flat size=sm')
 
                     elif is_owner:
-                        with ui.column().classes('relative w-32 sm:w-40 h-[310px] sm:h-[370px] flex-shrink-0 snap-start ' 
+                        with ui.column().classes('relative w-32 sm:w-52 h-[230px] sm:h-[370px] flex-shrink-0 snap-start ' 
                             'cursor-pointer hover:-translate-y-1 transition-transform duration-300 gap-2'):
-                            add_book_card(on_click=lambda r=rank: render_shelf_search_dialog(user_id=profile_user_id, on_close=on_add_book, initial_state=BookState.READ, rank=r))
+                            add_book_card(
+                                on_click=lambda r=rank: render_shelf_search_dialog(
+                                    user_id=profile_user_id,
+                                    on_close=lambda: render_top_shelf.refresh(
+                                        current_user_id=current_user_id,
+                                        profile_user_id=profile_user_id,
+                                        top_shelf=get_top_shelf(user_id=profile_user_id)
+                                    ),
+                                    initial_state=BookState.READ, rank=r)
+                            )
 
 @ui.refreshable
 def render_shelf(user_shelf: list, page: int = 1, books_per_page: int = 9) -> None:
@@ -147,9 +172,9 @@ def render_shelf(user_shelf: list, page: int = 1, books_per_page: int = 9) -> No
     with ui.grid().classes('w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 p-10 pt-0'):
         for user_book in books_for_current_page:
             user_book_card(user_book=user_book, on_click=lambda u_book=user_book: book_dialog(
-                user_id=u_book.user_id,
+                profile_user_id=u_book.user_id,
                 book=u_book.book,
-                current_user_book=u_book,
+                profile_user_book=u_book,
                 start_on_form=True,
                 on_close=lambda:render_shelf.refresh(user_shelf=get_user_shelf(user_id=u_book.user_id))))
 

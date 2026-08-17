@@ -77,7 +77,7 @@ def update_book_state(user_id: int, book_id: int, new_state: BookState) -> None:
         session.execute(stmt)
         session.commit()
 
-def update_top_shelf_rank(user_id: int, book_id: int, new_top_shelf_rank: int) -> None:
+def update_top_shelf_rank(user_id: int, book_id: int, new_top_shelf_rank: int | None) -> None:
     with get_session() as session:
         stmt = (
             update(UserBook)

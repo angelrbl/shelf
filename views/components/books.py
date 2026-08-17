@@ -11,7 +11,7 @@ def book_card(book: Book) -> None:
     user_id = app.storage.user.get("user_id")
     user_book = get_user_book_by_google_id(user_id=user_id, google_book_id=book.google_book_id)
 
-    with ui.card().on('click', lambda: book_dialog(user_id=user_id, book=book, current_user_book=user_book)).classes(
+    with ui.card().on('click', lambda: book_dialog(profile_user_id=user_id, book=book, profile_user_book=user_book)).classes(
         'p-0 w-full h-full flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-all rounded-md cursor-pointer'):
 
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain shrink-0')

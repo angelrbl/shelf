@@ -29,7 +29,7 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
             ui.space()
 
             if start_on_form:
-                submit_button(text="Back to your info", on_click=on_switch_to_form).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
+                submit_button(text="Go back", on_click=on_switch_to_form).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
             elif is_on_shelf:
                 with ui.row().classes('gap-5 w-full mt-1 pr-2'):
                     submit_button(text="✓ In shelf", on_click=on_switch_to_form).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
@@ -166,12 +166,96 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 on_click=handle_submit
             ).classes('w-full mt-4 py-2 rounded-lg shadow-sm font-bold')
 
-def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] = None, start_on_form: bool = False, on_close: callable | None = None) -> None:
-    if not current_user_book:
-        current_user_book = get_user_book(user_id=user_id, book_id=book.id)
+def render_visitor_view(
+        book: Book,
+        profile_user_book: UserBook,
+        current_user_book: Optional[UserBook],
+        on_see_in_shelf: callable,
+        on_switch_to_info: callable,
+        on_switch_to_form_edit: callable
+    ) -> None:
+    with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
+        with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
+            ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-cover rounded-lg shadow-md')
 
-    is_on_shelf = current_user_book is not None
-    initial_state = "form" if start_on_form else "info"
+        with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
+            ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+            ui.label(book.author).classes('text-lg text-slate-500 font-medium')
+
+            with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
+                if book.genres:
+                    genres = book.genres.split(", ")
+                    with ui.row().classes('mt-2 gap-2'):
+                        for genre in genres[0:3]:
+                            ui.badge(genre.title()).classes('bg-slate-100 px-2.5 py-1 font-semibold').props('rounded')
+                ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 mt-2')
+
+            ui.separator()
+            ui.space()
+
+            with ui.row().classes('justify-between w-full items-end gap-5'):
+                current_state = profile_user_book.state
+                color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
+
+                ui.badge(profile_user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
+
+                if profile_user_book.rating:
+                    ui.label(f"{profile_user_book.rating}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
+
+            with ui.row().classes('w-full items-center justify-between mt-1'):
+                if current_user_book:
+                    with ui.row().classes('gap-5 w-full mt-1 pr-2'):
+                        submit_button(text="✓ In shelf", on_click=on_see_in_shelf).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                else:
+                    with ui.row().classes('gap-5 w-full mt-1 pr-2'):
+                        submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold')
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+
+    with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56 pr-4'):
+        if profile_user_book.start_date or profile_user_book.end_date or profile_user_book.note:
+            with ui.column().classes('bg-slate-50 rounded-xl p-4 w-full mt-4 border border-slate-100'):
+
+                if profile_user_book.start_date or profile_user_book.end_date:
+                    with ui.row().classes('w-full items-center justify-center gap-6 border-b border-slate-200 pb-3 mb-2'):
+        
+                        if profile_user_book.start_date:
+                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                                ui.icon('calendar_today').classes('text-lg')
+                                ui.label(f"Started: {profile_user_book.start_date}").classes('text-sm font-medium')
+
+                        if profile_user_book.end_date:
+                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                                ui.icon('flag').classes('text-lg')
+                                ui.label(f"Finished: {profile_user_book.end_date}").classes('text-sm font-medium')
+
+                if profile_user_book.note:
+                    with ui.column().classes('w-full gap-1 mt-2'):
+                        ui.icon('format_quote').classes('text-3xl text-slate-300 -mb-2 -ml-1')
+                        ui.label(profile_user_book.note).classes('text-slate-700 italic leading-relaxed text-justify text-base px-2')
+
+def book_dialog(
+        profile_user_id: int,
+        book: Book,
+        profile_user_book: Optional[UserBook] = None,
+        start_on_form: bool = False,
+        on_close: callable | None = None,
+        is_owner: bool = True,
+        current_user_id: int | None = None
+    ) -> None:
+
+    if not current_user_id:
+        current_user_id = profile_user_id
+    
+    if not profile_user_book:
+        profile_user_book = get_user_book(user_id=profile_user_id, book_id=book.id)
+
+    current_user_book = get_user_book(user_id=current_user_id, book_id=book.id)
+
+    if is_owner:
+        initial_state = "form" if start_on_form else "info"
+    else:
+        initial_state = "visitor"
 
     with ui.dialog().classes('items-end sm:items-center !mb-0') as dialog:
         with ui.card().classes('w-full sm:max-w-3xl !pb-0 p-6 flex flex-col gap-4 '
@@ -179,43 +263,47 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
             'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl'):
 
             @ui.refreshable
-            def dynamic_dialog_content(state: str, user_book: Optional[UserBook]) -> None:
+            def dynamic_dialog_content(state: str, user_book: Optional[UserBook], current_user_book_data: Optional[UserBook]) -> None:
                 current_book = user_book.book if user_book else book
 
                 def handle_delete():
-                    remove_book(user_id=user_id, book_id=current_book.id)
+                    remove_book(user_id=current_user_id, book_id=current_book.id)
                     ui.notify("Book removed from your shelf.", type='positive')
                     dialog.close()
                     if start_on_form:
                         from views.components.shelf import render_shelf
-                        user_shelf = get_user_shelf(user_id=user_id)
+                        user_shelf = get_user_shelf(user_id=current_user_id)
                         render_shelf.refresh(user_shelf=user_shelf)
                     else:
                         from views.components.books import render_books
                         render_books.refresh()
                         
                 if state == 'info':
+                    has_book_in_my_shelf = current_user_book_data is not None
+
                     render_info_view(
                         book=current_book,
-                        is_on_shelf=is_on_shelf,
+                        is_on_shelf=has_book_in_my_shelf,
                         start_on_form=start_on_form,
-                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book),
+                        on_switch_to_form=lambda: dynamic_dialog_content.refresh(state=('form' if is_owner else 'visitor'), user_book=user_book, current_user_book_data=current_user_book_data),
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
                         on_delete=handle_delete
                     )
                 elif state == 'form':
+                    book_to_show = user_book if is_owner else current_user_book_data
+
                     render_form_view(
                         book=current_book,
-                        user_book=user_book,
-                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
-                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book),
+                        user_book=book_to_show,
+                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book, current_user_book_data=current_user_book_data),
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
                         on_delete=handle_delete
                     )
                 elif state == 'form_edit':
                     def handle_save(user_book_data):
                         try:
                             add_book(
-                                user_id=user_id,
+                                user_id=current_user_id,
                                 book=user_book_data.get("book"),
                                 state=user_book_data.get("state"),
                                 start_date=user_book_data.get("start_date"),
@@ -224,21 +312,36 @@ def book_dialog(user_id: int, book: Book, current_user_book: Optional[UserBook] 
                                 note=user_book_data.get("note")
                             )
 
-                            updated_user_book = get_user_book_by_google_id(user_id=user_id, google_book_id=user_book_data.get("google_book_id"))
+                            updated_user_book = get_user_book_by_google_id(user_id=current_user_id, google_book_id=user_book_data.get("google_book_id"))
 
                             ui.notify("Book data updated successfully!", type='positive')
-                            dynamic_dialog_content.refresh(state='form', user_book=updated_user_book)
+                            dynamic_dialog_content.refresh(
+                                state='form', 
+                                user_book=updated_user_book, 
+                                current_user_book_data=updated_user_book
+                            )
                         except ValueError as err:
                             ui.notify("End date can't be early than start date.", type='negative')
 
+                    book_to_edit = user_book if is_owner else current_user_book_data
+
                     render_form_edit_view(
                         book=current_book,
-                        user_book=user_book,
+                        user_book=book_to_edit,
                         on_save=handle_save,
-                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book),
+                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book, current_user_book_data=current_user_book_data),
+                    )
+                elif state == 'visitor':
+                    render_visitor_view(
+                        book=book,
+                        profile_user_book=user_book,
+                        current_user_book=current_user_book_data,
+                        on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book, current_user_book_data=current_user_book_data),
+                        on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
+                        on_see_in_shelf=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book, current_user_book_data=current_user_book_data)
                     )
 
-            dynamic_dialog_content(state=initial_state, user_book=current_user_book)
+            dynamic_dialog_content(state=initial_state, user_book=profile_user_book, current_user_book_data=current_user_book)
 
     if on_close:
         dialog.on('hide', on_close)

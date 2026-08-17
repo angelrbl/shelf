@@ -91,7 +91,9 @@ def render_profile_body(current_user: User, requested_username: str | None):
         )
 
         if can_see_top_shelf:
-            render_top_shelf(current_user_id=current_user.id,
-                             profile_user_id=profile_user.id,
-                             is_owner=is_owner,
-                             top_shelf=get_top_shelf(user_id=profile_user.id), on_add_book=render_profile_body.refresh)
+            render_top_shelf(
+                current_user_id=current_user.id,
+                profile_user_id=profile_user.id,
+                is_owner=is_owner,
+                top_shelf=get_top_shelf(user_id=profile_user.id),
+            )
