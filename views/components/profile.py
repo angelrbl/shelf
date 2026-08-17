@@ -6,7 +6,8 @@ from services import (
     get_user_by_id,
     get_currently_reading_books,
     get_user_by_username,
-    are_mutual_friends
+    are_mutual_friends,
+    get_top_shelf
 )
 
 from views.components import (
@@ -14,7 +15,8 @@ from views.components import (
     render_general_stats,
     render_currently_reading,
     render_follow_button,
-    render_follows
+    render_follows,
+    render_top_shelf
 )
 
 @ui.refreshable
@@ -81,3 +83,15 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
         if can_see_reading:
             render_currently_reading(user_id=profile_user.id, currently_reading_books=get_currently_reading_books(user_id=profile_user.id))
+
+        can_see_top_shelf = (
+            is_owner or
+            profile_user.privacy_settings.get("top_shelf") == SettingsPrivacy.PUBLIC or
+            (profile_user.privacy_settings.get("top_shelf") == SettingsPrivacy.FRIENDS and is_friend)
+        )
+
+        if can_see_top_shelf:
+            render_top_shelf(current_user_id=current_user.id,
+                             profile_user_id=profile_user.id,
+                             is_owner=is_owner,
+                             top_shelf=get_top_shelf(user_id=profile_user.id), on_add_book=render_profile_body.refresh)

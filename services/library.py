@@ -77,6 +77,30 @@ def update_book_state(user_id: int, book_id: int, new_state: BookState) -> None:
         session.execute(stmt)
         session.commit()
 
+def update_top_shelf_rank(user_id: int, book_id: int, new_top_shelf_rank: int) -> None:
+    with get_session() as session:
+        stmt = (
+            update(UserBook)
+            .where(UserBook.user_id == user_id,
+                   UserBook.book_id == book_id
+            )
+            .values(top_shelf_rank=new_top_shelf_rank)
+        )
+        session.execute(stmt)
+        session.commit()
+
+def update_most_wished_rank(user_id: int, book_id: int, new_most_wished_rank: int) -> None:
+    with get_session() as session:
+        stmt = (
+            update(UserBook)
+            .where(UserBook.user_id == user_id,
+                   UserBook.book_id == book_id
+            )
+            .values(top_wished_rank=new_most_wished_rank)
+        )
+        session.execute(stmt)
+        session.commit()
+
 def update_user_book(
         user_id: int,
         book_id: Book,
@@ -156,6 +180,30 @@ def get_currently_reading_books(user_id: int, max_results: int = 3) -> list[User
             .limit(max_results)
         )
         return list(session.scalars(stmt).all())
+
+def get_top_shelf(user_id: int) -> list[UserBook]:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.top_shelf_rank.isnot(None)
+            )
+            .options(joinedload(UserBook.book))
+        )
+        return list(session.scalars(stmt).all()) or []
+    
+def get_most_wished(user_id: int) -> list[UserBook]:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.top_wished_rank.isnot(None)
+            )
+            .options(joinedload(UserBook.book))
+        )
+        return list(session.scalars(stmt).all()) or []
 
 def get_user_book(user_id: int, book_id: int) -> UserBook | None:
     with get_session() as session:
