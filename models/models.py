@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from sqlalchemy import String, Text, ForeignKey, Date, UniqueConstraint, JSON
+from sqlalchemy import String, Text, ForeignKey, Date, UniqueConstraint, JSON, Boolean
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core import Base
@@ -99,7 +99,7 @@ class UserBook(Base):
     note: Mapped[Optional[str]] = mapped_column(Text)
 
     top_shelf_rank: Mapped[Optional[int]] = mapped_column()
-    top_wished_rank: Mapped[Optional[int]] = mapped_column()
+    is_most_wished: Mapped[bool] = mapped_column(Boolean, default=False)
 
     user: Mapped[User] = relationship("User", back_populates="user_books")
     book: Mapped[Book] = relationship("Book", back_populates="user_books")

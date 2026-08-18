@@ -3,11 +3,11 @@ from nicegui import ui
 from models import User, SettingsPrivacy
 
 from services import (
-    get_user_by_id,
     get_currently_reading_books,
     get_user_by_username,
     are_mutual_friends,
-    get_top_shelf
+    get_top_shelf,
+    get_most_wished
 )
 
 from views.components import (
@@ -16,7 +16,8 @@ from views.components import (
     render_currently_reading,
     render_follow_button,
     render_follows,
-    render_top_shelf
+    render_top_shelf,
+    render_most_wished
 )
 
 @ui.refreshable
@@ -96,4 +97,18 @@ def render_profile_body(current_user: User, requested_username: str | None):
                 profile_user_id=profile_user.id,
                 is_owner=is_owner,
                 top_shelf=get_top_shelf(user_id=profile_user.id),
+            )
+
+        can_see_most_wished = (
+            is_owner or
+            profile_user.privacy_settings.get("top_wished") == SettingsPrivacy.PUBLIC or
+            (profile_user.privacy_settings.get("top_wished") == SettingsPrivacy.FRIENDS and is_friend)
+        )
+
+        if can_see_top_shelf:
+            render_most_wished(
+                current_user_id=current_user.id,
+                profile_user_id=profile_user.id,
+                is_owner=is_owner,
+                most_wished_shelf=get_most_wished(user_id=profile_user.id),
             )
