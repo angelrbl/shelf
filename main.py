@@ -21,5 +21,6 @@ if __name__ in {'__main__', '__mp_main__'}:
     ui.run(
         storage_secret=STORAGE_SECRET,
         title="Shelf",
-        favicon='static/favicon.svg'
+        favicon='static/favicon.svg',
+        on_air=True
     )
