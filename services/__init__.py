@@ -16,7 +16,7 @@ from services.library import (
     get_user_book_by_google_id
 )
 from services.auth import register_user, authenticate_user, delete_user, update_username, update_password, get_user_by_id, get_user_by_username
-from services.stats import total_read_books, average_book_rating, total_read_books_this_year
+from services.stats import total_read_books, average_book_rating, total_read_books_this_year, get_heatmap_data, user_books_by_genre
 from services.network import (
     follow_user,
     unfollow_user,
@@ -58,6 +58,8 @@ __all__ = [
     "total_read_books",
     "average_book_rating",
     "total_read_books_this_year",
+    "get_heatmap_data",
+    "user_books_by_genre",
     "follow_user",
     "unfollow_user",
     "is_following",

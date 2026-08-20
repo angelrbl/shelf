@@ -31,7 +31,7 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
                     ui.label(f"#{rank}").classes(f"text-bold {color_class} text-bold text-xl")
                     
                 if user_book.rating:
-                    ui.label(f"{user_book.rating}/10").classes(f"text-bold {color_class} text-bold text-lg")
+                    ui.label(f"{user_book.rating}/10").classes(f"text-bold {color_class} text-bold text-sm sm:text-lg")
 
 def add_book_card(on_click: callable) -> None:
     with ui.card().on('click', on_click).classes(
@@ -68,7 +68,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                 with ui.column().classes('col-span-1 w-full justify-center items-center'):
                                     (
                                         ui.image(book.cover_url)
-                                        .classes('w-32 h-44 sm:w-40 sm:h-56 object-cover rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-all')
+                                        .classes('w-32 h-44 sm:w-40 sm:h-56 object-contain rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-all')
                                         .on("click", lambda: book_dialog(profile_user_id=user_id, book=book))
                                     )
                         

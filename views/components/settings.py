@@ -13,7 +13,7 @@ PRIVACY_OPTIONS = {
 
 PRIVACY_LABELS = {
     'follows': 'Who can see my followers and following',
-    'general_stats': 'Who can see my general reading stats',
+    'insights': 'Who can see my general reading insights',
     'reading': 'Who can see what I am currently reading',
     'top_shelf': 'Who can see my top shelf',
     'top_wished': 'Who can see my most wished books',

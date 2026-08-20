@@ -27,7 +27,7 @@ def get_another_sample_book():
         author = "Albert Camus",
         cover_url = None,
         description = "An indifferent man judged for his world vision",
-        genres = "fiction, philosphy",
+        genres = "fiction, philosophy",
         page_count = "120"
     )
 
@@ -122,3 +122,34 @@ def test_total_read_books_this_year(db_session):
     book_id = user_shelf[1].book_id
     library.update_book_state(user_id=user.id, book_id=book_id, new_state=BookState.READ)
     assert stats.total_read_books_this_year(user_id=user.id) == 1
+
+def test_user_books_by_genre(db_session):
+    user = User(username="theoldman", password="ilovethesea")
+        
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, end_date=date(2025, 5, 19))
+
+    book = get_another_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, end_date=date(2026, 5, 19))
+
+    print(stats.user_books_by_genre(user_id=user.id))
+    assert stats.user_books_by_genre(user_id=user.id) == {'fiction': 2, 'dystopia': 1, 'philosophy': 1}
+
+def test_get_heatmap_data(db_session):
+    user = User(username="sisifoooo_xXx", password="cAmUsGoD")
+            
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 18), end_date=date(2026, 5, 19))
+
+    assert stats.get_heatmap_data(user_id=user.id) == [['2026-05-18', 155], ['2026-05-19', 155]]
+
+    book = get_another_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 19), end_date=date(2026, 5, 20))
+
+    assert stats.get_heatmap_data(user_id=user.id) == [['2026-05-18', 155], ['2026-05-19', 215], ['2026-05-20', 60]]
