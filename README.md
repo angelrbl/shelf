@@ -103,7 +103,7 @@ python main.py
 
 - [ ] Expand and polish the recommendation engine
 - [x] Richer stats & dashboards
-- [ ] Deploy Shelf on the web
+- [x] Deploy Shelf on the web
 - [ ] Multiple language support (en/es)
 - [ ] UI tweaks and appearance; dark mode
 
