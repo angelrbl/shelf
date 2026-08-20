@@ -12,12 +12,13 @@ from services import (
 
 from views.components import (
     icon_button,
-    render_general_stats,
+    render_insights,
     render_currently_reading,
     render_follow_button,
     render_follows,
     render_top_shelf,
-    render_most_wished
+    render_most_wished,
+    render_user_stats
 )
 
 @ui.refreshable
@@ -69,12 +70,12 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
         can_see_generals_stats = (
             is_owner or
-            profile_user.privacy_settings.get("general_stats") == SettingsPrivacy.PUBLIC or
-            (profile_user.privacy_settings.get("general_stats") == SettingsPrivacy.FRIENDS and is_friend)
+            profile_user.privacy_settings.get("insights") == SettingsPrivacy.PUBLIC or
+            (profile_user.privacy_settings.get("insights") == SettingsPrivacy.FRIENDS and is_friend)
         )
 
         if can_see_generals_stats:
-            render_general_stats(user_id=profile_user.id)
+            render_insights(user_id=profile_user.id)
 
         can_see_reading = (
             is_owner or
@@ -105,10 +106,19 @@ def render_profile_body(current_user: User, requested_username: str | None):
             (profile_user.privacy_settings.get("top_wished") == SettingsPrivacy.FRIENDS and is_friend)
         )
 
-        if can_see_top_shelf:
+        if can_see_most_wished:
             render_most_wished(
                 current_user_id=current_user.id,
                 profile_user_id=profile_user.id,
                 is_owner=is_owner,
                 most_wished_shelf=get_most_wished(user_id=profile_user.id),
             )
+
+        can_see_stats = (
+            is_owner or
+            profile_user.privacy_settings.get("stats") == SettingsPrivacy.PUBLIC or
+            (profile_user.privacy_settings.get("stats") == SettingsPrivacy.FRIENDS and is_friend)
+        )
+
+        if can_see_stats:
+            render_user_stats(user_id=profile_user.id)

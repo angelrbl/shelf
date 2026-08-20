@@ -14,8 +14,6 @@ def render_header(current_path: str) -> None:
         app.storage.user.clear()
         go_home()
 
-    ui.add_head_html('<script src="https://cdn.jsdelivr.net/npm/eruda"></script><script>eruda.init();</script>')
-    
     with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 backdrop-blur-md p-3 z-50').props('reveal'):
         with ui.row().classes('w-full items-center justify-between'):
             ui.label("Shelf.").on('click', go_home).classes('text-3xl font-bold text-slate-700 text pl-5 hover:text-slate-500 cursor-pointer')

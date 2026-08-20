@@ -22,5 +22,4 @@ if __name__ in {'__main__', '__mp_main__'}:
         storage_secret=STORAGE_SECRET,
         title="Shelf",
         favicon='static/favicon.svg',
-        on_air=True
     )

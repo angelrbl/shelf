@@ -137,3 +137,19 @@ def test_user_books_by_genre(db_session):
 
     print(stats.user_books_by_genre(user_id=user.id))
     assert stats.user_books_by_genre(user_id=user.id) == {'fiction': 2, 'dystopia': 1, 'philosophy': 1}
+
+def test_get_heatmap_data(db_session):
+    user = User(username="sisifoooo_xXx", password="cAmUsGoD")
+            
+    db_session.add(user)
+    db_session.commit()
+
+    book = get_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 18), end_date=date(2026, 5, 19))
+
+    assert stats.get_heatmap_data(user_id=user.id) == [['2026-05-18', 155], ['2026-05-19', 155]]
+
+    book = get_another_sample_book()
+    library.add_book(user_id=user.id, book=book, state=BookState.READ, start_date=date(2026, 5, 19), end_date=date(2026, 5, 20))
+
+    assert stats.get_heatmap_data(user_id=user.id) == [['2026-05-18', 155], ['2026-05-19', 215], ['2026-05-20', 60]]

@@ -15,7 +15,7 @@ class SettingsPrivacy(str, Enum):
 
 DEFAULT_PRIVACY = {
     'follows': SettingsPrivacy.PUBLIC.value,
-    'general_stats': SettingsPrivacy.PUBLIC.value,
+    'insights': SettingsPrivacy.PUBLIC.value,
     'reading': SettingsPrivacy.PUBLIC.value,
     'top_shelf': SettingsPrivacy.PUBLIC.value,
     'top_wished': SettingsPrivacy.PUBLIC.value,
