@@ -16,6 +16,7 @@ license = { text = "MIT" }
 dependencies = [
     "nicegui",
     "sqlalchemy",
+    "psycopg2-binary",
     "werkzeug",
     "python-dotenv",
     "requests"

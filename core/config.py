@@ -15,3 +15,5 @@ DATA_DIR.mkdir(exist_ok=True)
 
 DEFAULT_DB_PATH =f"sqlite:///{DATA_DIR / 'shelf.db'}"
 DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DB_PATH)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
