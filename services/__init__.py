@@ -1,6 +1,36 @@
 from services.catalog import search_books
-from services.library import add_book, update_book_state, update_user_book, remove_book, get_user_shelf, filter_user_shelf, get_unique_shelf_genres, get_user_book_by_google_id
-from services.auth import register_user, authenticate_user, delete_user
+from services.library import (
+    add_book,
+    update_book_state,
+    update_user_book,
+    remove_book,
+    toggle_most_wished,
+    update_top_shelf_rank,
+    get_user_shelf,
+    filter_user_shelf,
+    get_unique_shelf_genres,
+    get_currently_reading_books,
+    get_top_shelf,
+    get_most_wished,
+    get_user_book,
+    get_user_book_by_google_id
+)
+from services.auth import register_user, authenticate_user, delete_user, update_username, update_password, get_user_by_id, get_user_by_username
+from services.stats import total_read_books, average_book_rating, total_read_books_this_year, get_heatmap_data, user_books_by_genre
+from services.network import (
+    follow_user,
+    unfollow_user,
+    is_following,
+    are_mutual_friends,
+    get_followers,
+    get_following,
+    get_friends,
+    get_following_count,
+    get_follower_count,
+    filter_users,
+    search_users,
+    update_settings
+)
 
 __all__ = [
     "search_books",
@@ -8,11 +38,38 @@ __all__ = [
     "update_book_state",
     "update_user_book",
     "remove_book",
+    "toggle_most_wished",
+    "update_top_shelf_rank",
     "get_user_shelf",
     "filter_user_shelf",
     "get_unique_shelf_genres",
+    "get_currently_reading_books",
+    "get_top_shelf",
+    "get_most_wished",
+    "get_user_book",
     "get_user_book_by_google_id",
     "register_user",
     "authenticate_user",
-    "delete_user"
+    "delete_user",
+    "update_username",
+    "update_password",
+    "get_user_by_id",
+    "get_user_by_username",
+    "total_read_books",
+    "average_book_rating",
+    "total_read_books_this_year",
+    "get_heatmap_data",
+    "user_books_by_genre",
+    "follow_user",
+    "unfollow_user",
+    "is_following",
+    "are_mutual_friends",
+    "get_followers",
+    "get_following",
+    "get_friends",
+    "get_following_count",
+    "get_follower_count",
+    "filter_users",
+    "search_users",
+    "update_settings"
 ]

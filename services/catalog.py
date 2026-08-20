@@ -51,9 +51,9 @@ def _search_books_from_google_api(query: str, max_results: int=5) -> list[dict]:
                 "title": volume_info.get("title"),
                 "author": ", ".join(author_list) if author_list else "Unknown",
                 "cover_url": image_links.get("thumbnail"),
-                "description": volume_info.get("description"),
+                "description": volume_info.get("description", ""),
                 "genres": ", ".join(genre_list) if genre_list else None,
-                "page_count": volume_info.get("pageCount")
+                "page_count": volume_info.get("pageCount", 0)
             }
         )
 

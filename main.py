@@ -6,7 +6,9 @@ init_db()
 
 import views.pages.login
 import views.pages.my_shelf
-import views.pages.book_search
+import views.pages.search
+import views.pages.profile
+import views.pages.settings
 
 @ui.page('/')
 def index() -> None:
@@ -19,5 +21,5 @@ if __name__ in {'__main__', '__mp_main__'}:
     ui.run(
         storage_secret=STORAGE_SECRET,
         title="Shelf",
-        favicon='static/favicon.svg'
+        favicon='static/favicon.svg',
     )

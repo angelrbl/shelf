@@ -26,3 +26,9 @@ STATE_COLORS = {
     BookState.READING: "!bg-orange-800 text-orange-100",
     BookState.DROPPED: "!bg-red-700 text-red-100"
 }
+
+RANK_COLORS = {
+    1: 'text-amber-500',
+    2: 'text-zinc-500',
+    3: 'text-orange-800'
+}

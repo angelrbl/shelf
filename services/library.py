@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import select, update, delete
+from sqlalchemy import func, select, update, delete
 from sqlalchemy.orm import joinedload
 
 from core import get_session
@@ -77,6 +77,40 @@ def update_book_state(user_id: int, book_id: int, new_state: BookState) -> None:
         session.execute(stmt)
         session.commit()
 
+def update_top_shelf_rank(user_id: int, book_id: int, new_top_shelf_rank: int | None) -> None:
+    with get_session() as session:
+        stmt = (
+            update(UserBook)
+            .where(UserBook.user_id == user_id,
+                   UserBook.book_id == book_id
+            )
+            .values(top_shelf_rank=new_top_shelf_rank)
+        )
+        session.execute(stmt)
+        session.commit()
+
+def toggle_most_wished(user_id: int, book_id: int, status: bool, max_limit: int = 5) -> None:
+    with get_session() as session:
+        if status is True:
+            stmt = select(func.count()).where(
+                UserBook.user_id == user_id, 
+                UserBook.is_most_wished == True
+            )
+            most_wished_count = session.execute(stmt).scalar()
+            
+            if most_wished_count >= max_limit:
+                raise ValueError(f"You can only have up to {max_limit} books in Most Wished.")
+            
+        stmt = (
+            update(UserBook)
+            .where(UserBook.user_id == user_id,
+                   UserBook.book_id == book_id
+            )
+            .values(is_most_wished=status)
+        )
+        session.execute(stmt)
+        session.commit()
+
 def update_user_book(
         user_id: int,
         book_id: Book,
@@ -143,7 +177,55 @@ def get_unique_shelf_genres(shelf: list[UserBook]) -> list[str]:
 
     return sorted(list(unique_genres))
 
-def get_user_book_by_google_id(user_id: int, google_book_id: str) -> None:
+def get_currently_reading_books(user_id: int, max_results: int = 3) -> list[UserBook] | None:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.state == BookState.READING
+            )
+            .order_by(UserBook.start_date.desc())
+            .options(joinedload(UserBook.book))
+            .limit(max_results)
+        )
+        return list(session.scalars(stmt).all())
+
+def get_top_shelf(user_id: int) -> list[UserBook]:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.top_shelf_rank.isnot(None)
+            )
+            .options(joinedload(UserBook.book))
+        )
+        return list(session.scalars(stmt).all()) or []
+    
+def get_most_wished(user_id: int, max_results: int = 5) -> list[UserBook]:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .where(
+                UserBook.user_id == user_id,
+                UserBook.is_most_wished == True
+            )
+            .options(joinedload(UserBook.book))
+            .limit(max_results)
+        )
+        return list(session.scalars(stmt).all()) or []
+
+def get_user_book(user_id: int, book_id: int) -> UserBook | None:
+    with get_session() as session:
+        stmt = (
+            select(UserBook)
+            .options(joinedload(UserBook.book))
+            .where(UserBook.user_id == user_id, UserBook.book_id == book_id)
+        )
+        return session.scalars(stmt).first()
+
+def get_user_book_by_google_id(user_id: int, google_book_id: str) -> UserBook| None:
     with get_session() as session:
         stmt = (
             select(UserBook)
