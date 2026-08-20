@@ -1,11 +1,11 @@
-# 📚 shelf
+# 📚 Shelf.
 
-**A personal book tracker — search, shelve, follow, and discover.**
+**An app for book lovers — search, shelve, follow, and discover.**
 
-shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking what you read: search books via the Google Books API, keep a personal library, follow other readers, discover trending/wished-for titles, and manage your account.
+Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking what you read: search books via the Google Books API, keep a personal library, follow other readers, discover trending/wished-for titles, and manage your account.
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![NiceGUI](https://img.shields.io/badge/UI-NiceGUI-black)
+![NiceGUI](https://img.shields.io/badge/UI-NiceGUI-navy)
 ![Status](https://img.shields.io/badge/status-in%20development-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -31,9 +31,9 @@ shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 - **Unified search** — search books and users from a single search UI.
 - **"My shelf"** — save books to your shelf; add notes, start and end date, ratings and other relevant info. Track your books!
 - **Top Shelf & Most Wished** — highlight your top-shelved books and the most-wished titles for others to see.
-- **Social network** — follow other users, with search/filter in the network UI.
+- **Social network** — follow other users, discover their profile, and search/filter in the network UI.
 - **Account & privacy settings** — dedicated settings page for account details and privacy controls.
-- **Reading stats** — charts and summaries of your reading activity.
+- **Reading stats** — yearly totals, average rating, genre breakdown, and a reading activity heatmap.
 - **Auth & profile** — login and a personal profile page.
 
 > Not every feature is fully polished yet — this is a work in progress.
@@ -46,7 +46,7 @@ shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 | UI | [NiceGUI](https://nicegui.io/) (FastAPI + Vue under the hood) |
 | Database | SQLAlchemy ORM (SQLite) |
 | External data | Google Books API |
-| Data & charts | Pandas, Plotly |
+| Charts | ECharts |
 | Testing | Pytest |
 
 ## Project structure
@@ -102,7 +102,7 @@ python main.py
 ## Roadmap
 
 - [ ] Expand and polish the recommendation engine
-- [ X ] Richer stats & dashboards
+- [x] Richer stats & dashboards
 - [ ] Deploy Shelf on the web
 - [ ] Multiple language support (en/es)
 - [ ] UI tweaks and appearance; dark mode

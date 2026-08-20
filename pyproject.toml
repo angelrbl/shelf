@@ -4,19 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shelf"
-version = "0.1.0"
-description = "Book tracker."
+version = "1.0.0"
+description = "An app for book lovers."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    { name = "Ángel" } 
+]
+license = { text = "MIT" } 
+
 dependencies = [
+    "nicegui",
     "sqlalchemy",
     "werkzeug",
     "python-dotenv",
-    "pytest",
-    "streamlit",
-    "pandas",
-    "plotly",
     "requests"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
 ]
 
 [tool.setuptools.packages.find]
