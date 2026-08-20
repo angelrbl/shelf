@@ -102,7 +102,7 @@ python main.py
 ## Roadmap
 
 - [ ] Expand and polish the recommendation engine
-- [ ] Richer stats & dashboards
+- [ X ] Richer stats & dashboards
 - [ ] Deploy Shelf on the web
 - [ ] Multiple language support (en/es)
 - [ ] UI tweaks and appearance; dark mode
