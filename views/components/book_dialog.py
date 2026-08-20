@@ -8,13 +8,15 @@ from services import get_user_book, remove_book, get_user_shelf, add_book, get_u
 from views.theme import STATE_COLORS
 from views.components.core import submit_button, icon_button, user_select
 
-def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_switch_to_form: callable, on_switch_to_form_edit: callable, on_delete: callable) -> None:
+def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_switch_to_form: callable, on_switch_to_form_edit: callable, on_delete: callable, close_dialog: callable) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
         with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
             ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-contain rounded-lg shadow-md')
 
         with ui.column().classes('col-span-1 sm:col-span-2 w-full sm:h-full justify-between gap-1'):
-            ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+            with ui.row().classes('w-full justify-between items-start flex-nowrap'):
+                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+                icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
             ui.label(book.author).classes('text-lg text-slate-500 font-medium')
 
             with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
@@ -38,20 +40,22 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
                 submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
 
     
-    with ui.column().classes('bg-slate-50 rounded-xl p-4 w-full mt-4 border border-slate-100'):
+    with ui.column().classes('bg-slate-50 rounded-xl p-4 mb-4 w-full mt-4 border border-slate-100'):
         ui.label("Book info:").classes('font-bold text-slate-800 text-lg')
 
         with ui.column().classes('w-full flex-grow h-48 sm:h-56 pr-4 overflow-y-auto'):
             desc = book.description if book.description else "No description available for this book."
             ui.label(desc).classes('text-slate-600 leading-relaxed text-justify break-words')
 
-def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_info: callable, on_switch_to_form_edit: callable, on_delete: callable) -> None:
+def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_info: callable, on_switch_to_form_edit: callable, on_delete: callable, close_dialog: callable) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
             with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
                 ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-contain rounded-lg shadow-md')
     
             with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
-                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+                with ui.row().classes('w-full justify-between items-start flex-nowrap'):
+                    ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+                    icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
                 ui.label(book.author).classes('text-lg text-slate-500 font-medium')
 
                 with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
@@ -176,14 +180,17 @@ def render_visitor_view(
         current_user_book: Optional[UserBook],
         on_see_in_shelf: callable,
         on_switch_to_info: callable,
-        on_switch_to_form_edit: callable
+        on_switch_to_form_edit: callable,
+        close_dialog: callable
     ) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
         with ui.column().classes('col-span-1 w-full items-center sm:items-start'):
             ui.image(book.cover_url).classes('w-36 sm:w-full h-52 sm:h-72 object-contain rounded-lg shadow-md')
 
         with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
-            ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+            with ui.row().classes('w-full justify-between items-start flex-nowrap'):
+                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
+                icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
             ui.label(book.author).classes('text-lg text-slate-500 font-medium')
 
             with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
@@ -262,23 +269,6 @@ def book_dialog(
 
     with ui.dialog().classes('items-end sm:items-center !mb-0') as dialog:
 
-        ui.add_head_html('''
-            <style>
-                @media (max-width: 639.98px) {
-                    .book-dialog-card {
-                        position: fixed !important;
-                        top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-                        width: 100% !important;
-                        height: 100dvh !important;
-                        max-height: none !important;
-                        max-width: none !important;
-                        margin: 0 !important;
-                        border-radius: 0 !important;
-                    }
-                }
-            </style>
-        ''')
-
         with ui.card().classes('book-dialog-card w-full sm:max-w-3xl !pb-0 p-6 flex flex-col gap-4 '
         '!mb-0 mt-auto sm:!my-auto max-h-[95dvh] sm:max-h-[85dvh] overflow-y-auto '
         'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl overflow-y-auto overflow-x-hidden isolate'):
@@ -312,7 +302,8 @@ def book_dialog(
                         start_on_form=start_on_form,
                         on_switch_to_form=lambda: dynamic_dialog_content.refresh(state=('form' if is_owner else 'visitor'), user_book=user_book, current_user_book_data=current_user_book_data),
                         on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
-                        on_delete=handle_delete
+                        on_delete=handle_delete,
+                        close_dialog=dialog.close
                     )
                 elif state == 'form':
                     book_to_show = user_book if is_owner else current_user_book_data
@@ -322,7 +313,8 @@ def book_dialog(
                         user_book=book_to_show,
                         on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book, current_user_book_data=current_user_book_data),
                         on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
-                        on_delete=handle_delete
+                        on_delete=handle_delete,
+                        close_dialog=dialog.close
                     )
                 elif state == 'form_edit':
                     def handle_save(user_book_data):
@@ -367,7 +359,8 @@ def book_dialog(
                         current_user_book=current_user_book_data,
                         on_switch_to_info=lambda: dynamic_dialog_content.refresh(state='info', user_book=user_book, current_user_book_data=current_user_book_data),
                         on_switch_to_form_edit=lambda: dynamic_dialog_content.refresh(state='form_edit', user_book=user_book, current_user_book_data=current_user_book_data),
-                        on_see_in_shelf=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book, current_user_book_data=current_user_book_data)
+                        on_see_in_shelf=lambda: dynamic_dialog_content.refresh(state='form', user_book=user_book, current_user_book_data=current_user_book_data),
+                        close_dialog=dialog.close
                     )
 
             dynamic_dialog_content(state=initial_state, user_book=profile_user_book, current_user_book_data=current_user_book)
