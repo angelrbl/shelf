@@ -1,5 +1,6 @@
 from core import STORAGE_SECRET, init_db
 from nicegui import ui, app
+import os
 
 import models
 init_db()
@@ -22,4 +23,6 @@ if __name__ in {'__main__', '__mp_main__'}:
         storage_secret=STORAGE_SECRET,
         title="Shelf",
         favicon='static/favicon.svg',
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 8080))
     )
