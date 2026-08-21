@@ -98,7 +98,7 @@ def render_insights(user_id: int) -> None:
             with ui.row().classes('w-full justify-around gap-4 items-center'):
                 stats_card(stat=total_read_books(user_id=user_id), desktop_label="total read books", mobile_label="books", border=True)  
                 stats_card(stat=total_read_books_this_year(user_id=user_id), desktop_label="books read this year", mobile_label="this year", border=True)
-                stats_card(stat=f"{average_book_rating(user_id=user_id):.1f}", desktop_label="average rating", mobile_label="avg rating")
+                stats_card(stat=f"{float(average_book_rating(user_id=user_id)):g}", desktop_label="average rating", mobile_label="avg rating")
 
 def render_user_stats(user_id: int) -> None:
     with ui.column().classes('w-full mx-auto gap-4 px-4 mt-4'):

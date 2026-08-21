@@ -76,7 +76,7 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
 
                     if user_book.rating:
-                        ui.label(f"{user_book.rating}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
+                        ui.label(f"{float(user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
 
                 with ui.row().classes('w-full items-center justify-between mt-1'):
                     submit_button(text="Edit info", on_click=on_switch_to_form_edit).classes('flex-1 sm:w-auto py-2 px-6 rounded-lg shadow-sm font-bold')
@@ -134,7 +134,7 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                 with ui.number(
                     'Rating (0-10)', 
                     value=user_book.rating if user_book else None, 
-                    min=0, max=10
+                    min=0, max=10, step=0.1, format='%g'
                 ).props('outlined color=slate-700 clearable').classes('w-full sm:w-1/3') as rating_input:
                     with rating_input.add_slot('prepend'):
                         ui.icon('star').classes('text-slate-500 text-xl')
@@ -211,7 +211,7 @@ def render_visitor_view(
                 ui.badge(profile_user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
 
                 if profile_user_book.rating:
-                    ui.label(f"{profile_user_book.rating}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
+                    ui.label(f"{float(profile_user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
 
             with ui.row().classes('w-full items-center justify-between mt-1'):
                 if current_user_book:
