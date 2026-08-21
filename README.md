@@ -6,9 +6,9 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![NiceGUI](https://img.shields.io/badge/UI-NiceGUI-navy)
-![Status](https://img.shields.io/badge/status-in%20development-orange)
-![License](https://img.shields.io/badge/license-MIT-green)
 [![Live demo](https://img.shields.io/badge/demo-online-brightgreen)](https://shelf-mymi.onrender.com/)
+![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 > ⚠️ **Under active development.** Structure and features may change without notice.
 
