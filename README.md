@@ -42,7 +42,7 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 
 ## Demo
 
-https://github.com/user-attachments/assets/aecbf217-1343-4c9d-9388-46e7b25a2916
+https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
 
 > Try out the demo app: [shelf on Render](https://shelf-mymi.onrender.com)
 
