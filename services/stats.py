@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from sqlalchemy import select, func, extract
+from sqlalchemy import select, func, extract, or_
 
 from core import get_session
 from models import Book, UserBook, BookState
@@ -42,7 +42,7 @@ def user_books_by_genre(user_id: int) -> dict[str, int]:
             select(Book.genres)
             .join(UserBook.book)
             .select_from(UserBook)
-            .where(UserBook.user_id == user_id, UserBook.state == BookState.READ, Book.genres.is_not(None))
+            .where(UserBook.user_id == user_id, or_(UserBook.state == BookState.READ, UserBook.state == BookState.DROPPED), Book.genres.is_not(None))
         )
 
         raw_genres_list = list(session.scalars(stmt).all())
@@ -63,7 +63,7 @@ def get_heatmap_data(user_id: int) -> list[list[(str, int | None)]]:
             .join(UserBook.book)
             .select_from(UserBook)
             .where(UserBook.user_id == user_id,
-                   UserBook.state == BookState.READ,
+                   or_(UserBook.state == BookState.READ, UserBook.state == BookState.DROPPED),
                    UserBook.start_date.is_not(None),
                    UserBook.end_date.is_not(None),
                    Book.page_count.is_not(None)

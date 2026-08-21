@@ -8,6 +8,7 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 ![NiceGUI](https://img.shields.io/badge/UI-NiceGUI-navy)
 ![Status](https://img.shields.io/badge/status-in%20development-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Live demo](https://img.shields.io/badge/demo-online-brightgreen)](https://shelf-mymi.onrender.com/)
 
 > ⚠️ **Under active development.** Structure and features may change without notice.
 
@@ -16,6 +17,7 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 ## Table of contents
 
 - [Features](#features)
+- [Demo](#demo)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
 - [Installation](#installation)
@@ -38,16 +40,23 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 
 > Not every feature is fully polished yet — this is a work in progress.
 
+## Demo
+
+https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
+
+> Try out the demo app: [shelf on Render](https://shelf-mymi.onrender.com)
+
 ## Tech stack
 
-| Category | Technology |
-|---|---|
-| Language | Python 3.10+ |
-| UI | [NiceGUI](https://nicegui.io/) (FastAPI + Vue under the hood) |
-| Database | SQLAlchemy ORM (SQLite) |
-| External data | Google Books API |
-| Charts | ECharts |
-| Testing | Pytest |
+| Category      | Technology                                                        |
+| ------------- | -------------------------------------------------------------     |
+| Language      | Python 3.10+                                                      |
+| UI            | [NiceGUI](https://nicegui.io/) (FastAPI + Vue under the hood)     |
+| Database      | SQLAlchemy ORM (PostgreSQL vía [Supabase](https://supabase.com/)) |
+| Hosting       | [Render](https://render.com/)                                     |
+| External data | Google Books API                                                  |
+| Charts        | ECharts                                                           |
+| Testing       | Pytest                                                            |
 
 ## Project structure
 

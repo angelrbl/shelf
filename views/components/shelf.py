@@ -28,10 +28,10 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
                     
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} p-1.75').props('rounded')
                 else:
-                    ui.label(f"#{rank}").classes(f"text-bold {color_class} text-bold text-xl")
+                    ui.label(f"#{rank}").classes(f"{color_class} text-bold text-xl")
                     
                 if user_book.rating:
-                    ui.label(f"{user_book.rating}/10").classes(f"text-bold {color_class} text-bold text-sm sm:text-lg")
+                    ui.label(f"{float(user_book.rating):g}/10").classes(f"text-bold {color_class} text-bold text-sm sm:text-lg")
 
 def add_book_card(on_click: callable) -> None:
     with ui.card().on('click', on_click).classes(

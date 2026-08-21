@@ -11,7 +11,7 @@ def add_book(
         state: BookState = BookState.WISHED,
         start_date: date | None = None,
         end_date: date | None = None,
-        rating: int | None = None,
+        rating: float | None = None,
         note: str | None = None
 ) -> UserBook:
     with get_session() as session:
@@ -117,7 +117,7 @@ def update_user_book(
         state: BookState,
         start_date: date | None = None,
         end_date: date | None = None,
-        rating: int | None = None,
+        rating: float | None = None,
         note: str | None = None
 ) -> None:
     with get_session() as session:
