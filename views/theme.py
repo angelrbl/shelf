@@ -1,4 +1,4 @@
-from nicegui import ui
+from nicegui import ui, app
 
 from models import BookState
 
@@ -15,8 +15,27 @@ def hide_scrollbar():
         </style>
     ''')
 
+def toggle_dark_mode(ui_mode: str) -> None:
+    dark = ui.dark_mode()
+
+    if ui_mode == "dark":
+        dark.disable()
+        app.storage.user["ui_mode"] = "light"
+
+    else:
+        dark.enable()
+        app.storage.user["ui_mode"] = "dark"
+
+    return
+
 def apply_theme() -> None:
     hide_scrollbar()
+
+    is_dark = app.storage.user.get("ui_mode", "light")
+        
+    if is_dark == "dark":
+        toggle_dark_mode(ui_mode="light")
+    
     ui.colors(primary='#2c3e50', secondary='#18bc9c', accent='#e74c3c')
     ui.query('body').classes('bg-slate-50')
 

@@ -1,5 +1,8 @@
 from nicegui import ui, app
 
+from views.theme import toggle_dark_mode
+from views.components.core import icon_button
+
 NAV_ITEMS = [
     {'label': 'My Shelf', 'icon': 'dashboard', 'path': '/my_shelf'},
     {'label': 'Search', 'icon': 'search', 'path': '/search'},
@@ -11,8 +14,10 @@ def render_header(current_path: str) -> None:
         ui.navigate.to('/')
         
     def log_out():
-        app.storage.user.clear()
+        app.storage.user.pop('user_id', None)
         go_home()
+
+    ui_mode = app.storage.user.get("ui_mode", "light")
 
     with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 backdrop-blur-md p-3 z-50').props('reveal'):
         with ui.row().classes('w-full items-center justify-between'):
@@ -27,7 +32,13 @@ def render_header(current_path: str) -> None:
                         ui.icon(item['icon']).classes('text-xl')
                         ui.label(item['label']).classes('text-sm')
 
-            ui.label("Log out").on('click', log_out).classes('cursor-pointer text-xl text-slate-700 text pr-5 hover:text-slate-500')
+            with ui.row().classes('gap-3 items-center justify-between'):
+                icon_button(
+                    icon=("brightness_medium" if ui_mode == "dark" else "dark_mode"),
+                    on_click=lambda: toggle_dark_mode(ui_mode=ui_mode),
+                    color="slate-700",
+                    tooltip=("Toggle light mode" if ui_mode == "dark" else "Toggle dark mode"))
+                ui.label("Log out").on('click', log_out).classes('cursor-pointer text-xl text-slate-700 text pr-5 hover:text-slate-500')
 
 def render_mobile_bottom_bar(current_path: str) -> None:
     with ui.row().classes(
