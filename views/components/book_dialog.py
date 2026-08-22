@@ -15,17 +15,17 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
 
         with ui.column().classes('col-span-1 sm:col-span-2 w-full sm:h-full justify-between gap-1'):
             with ui.row().classes('w-full justify-between items-start flex-nowrap'):
-                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
-                icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
-            ui.label(book.author).classes('text-lg text-slate-500 font-medium')
+                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800 dark:text-neutral-100')
+                icon_button(icon="close", color="slate-500", dark='neutral-400', tooltip="Close", on_click=close_dialog)
+            ui.label(book.author).classes('text-lg text-slate-500 dark:text-neutral-400 font-medium')
 
             with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
                 if book.genres:
                     genres = book.genres.split(", ")
                     with ui.row().classes('mt-2 gap-2'):
                         for genre in genres[0:3]:
-                            ui.badge(genre.title()).classes('bg-slate-100 px-2.5 py-1 font-semibold').props('rounded')
-                ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 mt-2')
+                            ui.badge(genre.title()).classes('bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 font-semibold').props('rounded')
+                ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
 
             ui.separator()
             ui.space()
@@ -40,12 +40,12 @@ def render_info_view(book: Book, is_on_shelf: bool, start_on_form: bool, on_swit
                 submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('w-full sm:w-full mt-1 py-2 px-6 rounded-lg shadow-sm font-bold')
 
     
-    with ui.column().classes('bg-slate-50 rounded-xl p-4 mb-4 w-full mt-4 border border-slate-100'):
-        ui.label("Book info:").classes('font-bold text-slate-800 text-lg')
+    with ui.column().classes('bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 mb-4 w-full mt-4 border border-slate-100 dark:border-neutral-800'):
+        ui.label("Book info:").classes('font-bold text-slate-800 dark:text-neutral-100 text-lg')
 
         with ui.column().classes('w-full flex-grow h-48 sm:h-56 pr-4 overflow-y-auto'):
             desc = book.description if book.description else "No description available for this book."
-            ui.label(desc).classes('text-slate-600 leading-relaxed text-justify break-words')
+            ui.label(desc).classes('text-slate-600 dark:text-neutral-300 leading-relaxed text-justify break-words')
 
 def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_info: callable, on_switch_to_form_edit: callable, on_delete: callable, close_dialog: callable) -> None:
     with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
@@ -54,53 +54,53 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
     
             with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
                 with ui.row().classes('w-full justify-between items-start flex-nowrap'):
-                    ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
-                    icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
-                ui.label(book.author).classes('text-lg text-slate-500 font-medium')
+                    ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800 dark:text-neutral-100')
+                    icon_button(icon="close", color="slate-500", dark='neutral-400', tooltip="Close", on_click=close_dialog)
+                ui.label(book.author).classes('text-lg text-slate-500 dark:text-neutral-400 font-medium')
 
                 with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
                     if book.genres:
                         genres = book.genres.split(", ")
                         with ui.row().classes('mt-2 gap-2'):
                             for genre in genres[0:3]:
-                                ui.badge(genre.title()).classes('bg-slate-100 px-2.5 py-1 font-semibold').props('rounded')
-                    ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 mt-2')
+                                ui.badge(genre.title()).classes('bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 font-semibold').props('rounded')
+                    ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
 
                 ui.separator()
                 ui.space()
     
                 with ui.row().classes('justify-between w-full items-end gap-5'):
                     current_state = user_book.state
-                    color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
+                    color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700 dark:text-neutral-200 dark:bg-slate-800")
 
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
 
                     if user_book.rating:
-                        ui.label(f"{float(user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
+                        ui.label(f"{float(user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 dark:text-neutral-300 pr-2')
 
                 with ui.row().classes('w-full items-center justify-between mt-1'):
                     submit_button(text="Edit info", on_click=on_switch_to_form_edit).classes('flex-1 sm:w-auto py-2 px-6 rounded-lg shadow-sm font-bold')
 
                     with ui.row().classes('gap-2'):
-                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", dark="neutral-400", tooltip="See book info")
                         icon_button(icon='delete', on_click=on_delete, color="red-500", tooltip="Remove from shelf")
 
     with ui.column().classes('w-full mt-4 h-48 sm:h-56 pr-4 overflow-y-auto'):
         if user_book and (user_book.start_date or user_book.end_date or user_book.note):
-            with ui.column().classes('bg-slate-50 rounded-xl p-4 w-full border border-slate-100'):
+            with ui.column().classes('bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 w-full border border-slate-100 dark:border-neutral-800'):
 
                 if user_book.start_date or user_book.end_date:
-                    border_class = 'border-b border-slate-200 pb-3 mb-2' if user_book.note else ''
+                    border_class = 'border-b border-slate-200 dark:border-neutral-700 pb-3 mb-2' if user_book.note else ''
 
                     with ui.row().classes(f'w-full items-center justify-center gap-6 {border_class}'):
         
                         if user_book.start_date:
-                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                            with ui.row().classes('items-center gap-2 text-slate-500 dark:text-neutral-400'):
                                 ui.icon('calendar_today').classes('text-lg')
                                 ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
 
                         if user_book.end_date:
-                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                            with ui.row().classes('items-center gap-2 text-slate-500 dark:text-neutral-400'):
                                 ui.icon('flag').classes('text-lg')
                                 ui.label(f"Finished: {user_book.end_date}").classes('text-sm font-medium')
 
@@ -108,20 +108,20 @@ def render_form_view(book: Book, user_book: Optional[UserBook], on_switch_to_inf
                     margin_class = 'mt-2' if (user_book.start_date or user_book.end_date) else ''
 
                     with ui.column().classes(f'w-full gap-1 {margin_class}'):
-                        ui.icon('format_quote').classes('text-3xl text-slate-300 -mb-2 -ml-1')
-                        ui.label(user_book.note).classes('text-slate-700 italic leading-relaxed text-justify text-base px-2 break-words')
+                        ui.icon('format_quote').classes('text-3xl text-slate-300 dark:text-neutral-600 -mb-2 -ml-1')
+                        ui.label(user_book.note).classes('text-slate-700 dark:text-neutral-200 italic leading-relaxed text-justify text-base px-2 break-words')
 
 def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: callable, on_switch_to_info: callable) -> None:
     with ui.row().classes('w-full items-center justify-between mb-2'):
-        ui.label("Edit details" if user_book else "Add to Shelf").classes('text-2xl font-bold text-slate-800')
+        ui.label("Edit details" if user_book else "Add to Shelf").classes('text-2xl font-bold text-slate-800 dark:text-neutral-100')
 
-    with ui.column().classes('w-full flex-grow sm:max-h-[70dvh] h-[60dvh] sm:h-[50dvh] pr-4 overflow-y-auto'):
+    with ui.column().classes('w-full flex-grow sm:max-h-[70dvh] h-[60dvh] sm:h-[45dvh] pr-4 overflow-y-auto'):
         with ui.column().classes('w-full gap-4 pb-4'):
-            with ui.row().classes('items-center gap-4 w-full bg-slate-50 p-3 rounded-lg justify-between'):
+            with ui.row().classes('items-center gap-4 w-full bg-slate-50 dark:bg-neutral-900 p-3 rounded-lg justify-between'):
                 with ui.row().classes("items-center flex-1"):
                     ui.image(book.cover_url).classes('w-12 h-16 object-contain rounded shadow-sm')
-                    ui.label(book.title).classes('font-semibold text-slate-700 line-clamp-2 flex-1')
-                icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                    ui.label(book.title).classes('font-semibold text-slate-700 dark:text-neutral-200 line-clamp-2 flex-1')
+                icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", dark='neutral-400', tooltip="See book info")
 
             with ui.row().classes('w-full gap-4 flex-col sm:flex-row'):
                 state_select = user_select(
@@ -129,33 +129,33 @@ def render_form_edit_view(book: Book, user_book: Optional[UserBook], on_save: ca
                     value=user_book.state if user_book else BookState.WISHED,
                     label='Book State *',
                     icon='bookmark'
-                ).props('outlined color=slate-700').classes('sm:flex-1')
+                ).props('outlined').classes('sm:flex-1')
 
                 with ui.number(
                     'Rating (0-10)', 
                     value=user_book.rating if user_book else None, 
                     min=0, max=10, step=0.1, format='%g'
-                ).props('outlined color=slate-700 clearable').classes('w-full sm:w-1/3') as rating_input:
+                ).props('outlined clearable').classes('w-full sm:w-1/3') as rating_input:
                     with rating_input.add_slot('prepend'):
-                        ui.icon('star').classes('text-slate-500 text-xl')
+                        ui.icon('star').classes('text-slate-500 dark:text-neutral-400 text-xl')
 
             with ui.row().classes('w-full gap-4'):
                 start_date_input = ui.input(
                     'Start Date', 
                     value=date.strftime(user_book.start_date, '%Y-%m-%d') if user_book and user_book.start_date else ''
-                ).props('type=date outlined color=slate-700').classes('flex-1')
+                ).props('type=date outlined').classes('flex-1')
                 
                 end_date_input = ui.input(
                     'End Date', 
                     value=date.strftime(user_book.end_date, '%Y-%m-%d') if user_book and user_book.end_date else ''
-                ).props('type=date outlined color=slate-700').classes('flex-1')  
+                ).props('type=date outlined').classes('flex-1')  
 
             with ui.textarea(
                 'Your thoughts...', 
                 value=user_book.note if user_book else ''
-            ).props('outlined color=slate-700 autogrow').classes('w-full') as note_input:
+            ).props('outlined autogrow').classes('w-full') as note_input:
                 with note_input.add_slot('prepend'):
-                    ui.icon('edit_note').classes('text-slate-500 text-xl pt-2')
+                    ui.icon('edit_note').classes('text-slate-500 dark:text-neutral-400 text-xl pt-2')
 
             def handle_submit():
                 user_book_data = {
@@ -189,60 +189,60 @@ def render_visitor_view(
 
         with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
             with ui.row().classes('w-full justify-between items-start flex-nowrap'):
-                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
-                icon_button(icon="close", color="slate-500", tooltip="Close", on_click=close_dialog)
-            ui.label(book.author).classes('text-lg text-slate-500 font-medium')
+                ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800 dark:text-neutral-100')
+                icon_button(icon="close", color="slate-500", dark="neutral-400", tooltip="Close", on_click=close_dialog)
+            ui.label(book.author).classes('text-lg text-slate-500 dark:text-neutral-400 font-medium')
 
             with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
                 if book.genres:
                     genres = book.genres.split(", ")
                     with ui.row().classes('mt-2 gap-2'):
                         for genre in genres[0:3]:
-                            ui.badge(genre.title()).classes('bg-slate-100 px-2.5 py-1 font-semibold').props('rounded')
-                ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 mt-2')
+                            ui.badge(genre.title()).classes('bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 font-semibold').props('rounded')
+                ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
 
             ui.separator()
             ui.space()
 
             with ui.row().classes('justify-between w-full items-end gap-5'):
                 current_state = profile_user_book.state
-                color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
+                color_classes = STATE_COLORS.get(current_state, "bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-200")
 
                 ui.badge(profile_user_book.state.value.title()).classes(f'{color_classes} px-4 py-1.5 text-sm font-semibold').props('rounded')
 
                 if profile_user_book.rating:
-                    ui.label(f"{float(profile_user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 pr-2')
+                    ui.label(f"{float(profile_user_book.rating):g}/10").classes('text-5xl font-semibold text-slate-600 dark:text-neutral-300 pr-2')
 
             with ui.row().classes('w-full items-center justify-between mt-1'):
                 if current_user_book:
                     with ui.row().classes('gap-5 w-full mt-1 pr-2'):
                         submit_button(text="✓ In shelf", on_click=on_see_in_shelf).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold').tooltip("See book in shelf")
-                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", dark="neutral-400", tooltip="See book info")
                 else:
                     with ui.row().classes('gap-5 w-full mt-1 pr-2'):
                         submit_button(text="+ Add book", on_click=on_switch_to_form_edit).classes('flex-1 py-2 px-6 rounded-lg shadow-sm font-bold')
-                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", tooltip="See book info")
+                        icon_button(icon='info', on_click=on_switch_to_info, color="slate-500", dark="neutral-400", tooltip="See book info")
 
     with ui.column().classes('w-full flex-grow h-48 sm:h-56 pr-4 overflow-y-auto'):
             if profile_user_book.start_date or profile_user_book.end_date or profile_user_book.note:
 
                 if profile_user_book.start_date or profile_user_book.end_date:
-                    with ui.row().classes('w-full items-center justify-center gap-6 border-b border-slate-200 pb-3 mb-2'):
+                    with ui.row().classes('w-full items-center justify-center gap-6 border-b border-slate-200 dark:text-neutral-700 pb-3 mb-2'):
         
                         if profile_user_book.start_date:
-                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                            with ui.row().classes('items-center gap-2 text-slate-500 dark:text-neutral-400'):
                                 ui.icon('calendar_today').classes('text-lg')
                                 ui.label(f"Started: {profile_user_book.start_date}").classes('text-sm font-medium')
 
                         if profile_user_book.end_date:
-                            with ui.row().classes('items-center gap-2 text-slate-500'):
+                            with ui.row().classes('items-center gap-2 text-slate-500 dark:text-neutral-400'):
                                 ui.icon('flag').classes('text-lg')
                                 ui.label(f"Finished: {profile_user_book.end_date}").classes('text-sm font-medium')
 
                 if profile_user_book.note:
                     with ui.column().classes('w-full gap-1 mt-2'):
-                        ui.icon('format_quote').classes('text-3xl text-slate-300 -mb-2 -ml-1')
-                        ui.label(profile_user_book.note).classes('text-slate-700 italic leading-relaxed text-justify text-base px-2')
+                        ui.icon('format_quote').classes('text-3xl text-slate-300 dark:text-neutral-600 -mb-2 -ml-1')
+                        ui.label(profile_user_book.note).classes('text-slate-700 dark:text-neutral-200 italic leading-relaxed text-justify text-base px-2')
 
 def book_dialog(
         profile_user_id: int,

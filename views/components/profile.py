@@ -43,7 +43,7 @@ def render_profile_body(current_user: User, requested_username: str | None):
     with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-center'):
             with ui.column().classes('gap-2'):
-                ui.label(f"@{profile_user.username}").classes("text-3xl text-slate-700 font-bold")
+                ui.label(f"@{profile_user.username}").classes("text-3xl text-slate-700 dark:text-neutral-200 font-bold")
                 can_see_follows = (
                     is_owner or
                     profile_user.privacy_settings.get("follows") == SettingsPrivacy.PUBLIC or
@@ -57,7 +57,7 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
             with ui.row().classes('sm:pt-3 sm:pr-1'):
                 if is_owner:
-                    icon_button(icon='settings', color='slate-500', on_click=lambda: ui.navigate.to('/settings'), tooltip="Open settings").classes('text-lg')
+                    icon_button(icon='settings', color='slate-500', dark="neutral-400", on_click=lambda: ui.navigate.to('/settings'), tooltip="Open settings").classes('text-lg')
                 else:
                     render_follow_button(
                         current_user_id=current_user.id,

@@ -25,5 +25,5 @@ def user_select(options: dict, label:str | None = None, value: Any | None = None
 
 def section_title(icon:str, text: str) -> None:
     with ui.row().classes('w-full mx-auto justify-start px-1 mt-5 gap-3 items-center'):
-        ui.icon(icon, color='slate-600').classes('text-xl')
-        ui.label(text).classes('text-md font-black tracking-widest text-slate-600 uppercase')
+        ui.icon(icon, color='slate-600 dark:neutral-300').classes('text-xl')
+        ui.label(text).classes('text-md font-black tracking-widest text-slate-600 dark:text-neutral-300 uppercase')

@@ -52,7 +52,7 @@ def render_header(current_path: str) -> None:
 def render_mobile_bottom_bar(current_path: str) -> None:
     with ui.row().classes(
         'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 '
-        'bg-white/85 backdrop-blur-md border border-slate-200 '
+        'bg-white/85 dark:bg-neutral-800/85 backdrop-blur-md border border-slate-200 dark:border-neutral-700 '
         'px-8 py-3 rounded-full shadow-2xl w-[75%] max-w-xs'
         'items-center justify-around '
         'flex sm:!hidden'
@@ -60,7 +60,7 @@ def render_mobile_bottom_bar(current_path: str) -> None:
         for item in NAV_ITEMS:
             is_active = current_path == item['path']
 
-            color = 'text-slate-900' if is_active else 'text-slate-400'
+            color = 'text-slate-900 dark:text-neutral-50' if is_active else 'text-slate-400 dark:text-neutral-500'
             scale = 'scale-120' if is_active else 'scale-100'
 
             with ui.column().on('click', lambda _, path=item['path']: ui.navigate.to(path)).classes(

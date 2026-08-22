@@ -24,7 +24,6 @@ def toggle_dark_mode() -> None:
     dark.toggle()
 
     app.storage.user["ui_mode"] = "dark" if dark.value else "light"
-    ui.colors(primary=MODE_PRIMARY_COLORS["dark" if dark.value else "light"])
 
 def apply_theme() -> None:
     hide_scrollbar()
@@ -37,18 +36,13 @@ def apply_theme() -> None:
     if ui_mode == "dark":
         toggle_dark_mode()
     ui.colors(
-        primary=MODE_PRIMARY_COLORS[ui_mode],
+        primary='#2c3e50',
         secondary='#18bc9c',
         accent='#e74c3c',
         dark='#262626',
         dark_page='#171717',
     )
     ui.query('body').classes('bg-slate-50 dark:bg-neutral-900')
-
-MODE_PRIMARY_COLORS = {
-    "dark": '#7b99b7',
-    "light": '#2c3e50'
-}
 
 STATE_COLORS = {
     BookState.READ: "!bg-green-700 text-green-100",

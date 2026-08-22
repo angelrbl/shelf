@@ -27,8 +27,8 @@ def render_privacy_settings(user: User) -> None:
         for settings_key, label_text in PRIVACY_LABELS.items():
             current_value = current_settings.get(settings_key, 'public')
 
-            with ui.row().classes('w-full flex-col sm:flex-row justify-between sm:items-center border-b border-slate-200 py-4 gap-3 sm:gap-0'):
-                ui.label(label_text).classes('text-sm sm:text-base text-slate-700 font-medium')
+            with ui.row().classes('w-full flex-col sm:flex-row justify-between sm:items-center border-b border-slate-200 dark:border-neutral-700 py-4 gap-3 sm:gap-0'):
+                ui.label(label_text).classes('text-sm sm:text-base text-slate-700 dark:text-neutral-200 font-medium')
 
                 (
                     ui.select(
@@ -45,39 +45,39 @@ def render_account_settings(user: User) -> None:
 
         render_update_username(user=user)
 
-        with ui.row().classes('w-full flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 gap-3 py-4 sm:gap-0'):
-            ui.label(f"Password: ").classes('pl-4 sm:pl-0 text-sm sm:text-base text-slate-700 font-medium')
+        with ui.row().classes('w-full flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 dark:border-neutral-700 gap-3 py-4 sm:gap-0'):
+            ui.label(f"Password: ").classes('pl-4 sm:pl-0 text-sm sm:text-base text-slate-700 dark:text-neutral-200 font-medium')
 
             with ui.column().classes('pl-4 sm:pl-0 w-full sm:w-auto gap-2 sm:gap-3 items-start sm:items-end'):
                 password = (
                     ui.input(value=f"jajajajajaja", password=True)
-                    .props('filled dense input-class="text-slate-800 font-medium" disable')
+                    .props('filled dense input-class="text-slate-800 dark:text-neutral-100 font-medium" disable')
                 )
                 (
                     ui.label("Update password")
-                    .classes('pl-1 sm:pl-0 sm:pr-2 hover:text-slate-500 text-slate-700 font-bold text-sm cursor-pointer')
+                    .classes('pl-1 sm:pl-0 sm:pr-2 hover:text-slate-500 dark:hover:text-neutral-400 text-slate-700 dark:text-neutral-200 font-bold text-sm cursor-pointer')
                     .on("click", lambda: update_password_dialog(user_id=user.id))
                 )
 
         with ui.row().classes('w-full justify-center mt-2 sm:mt-4'):
             (
                 ui.label("Delete account")
-                .classes('rounded-xl p-2 text-red-600 text-md hover:bg-red-100 cursor-pointer font-medium')
+                .classes('rounded-xl p-2 text-red-600 text-md hover:bg-red-100 dark:hover:bg-red-600 dark:hover:text-neutral-200 cursor-pointer font-medium')
                 .on("click", lambda: delete_user_dialog(user_id=user.id))
             )
             
 def render_update_username(user: User) -> None:
-    with ui.row().classes('w-full flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 gap-3 py-4 sm:gap-0'):
+    with ui.row().classes('w-full flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200 dark:border-neutral-700 gap-3 py-4 sm:gap-0'):
 
-        ui.label(f"Username: ").classes('pl-4 sm:pl-0 text-sm sm:text-base text-slate-700 font-medium')
+        ui.label(f"Username: ").classes('pl-4 sm:pl-0 text-sm sm:text-base text-slate-700 dark:text-neutral-200 font-medium')
         with ui.row().classes('w-full sm:w-auto flex-row flex-nowrap justify-between items-start gap-3'):
             with ui.column().classes('w-full sm:w-auto gap-1 sm:gap-2 items-start'):
                 with ui.row().classes('gap-1 sm:gap-2 items-center flex-nowrap'):
-                    ui.label("@").classes('text-sm sm:text-base text-slate-700 font-medium')
+                    ui.label("@").classes('text-sm sm:text-base text-slate-700 dark:text-neutral-200 font-medium')
                     new_username = (
                         ui.input(value=f"{user.username}")
                         .classes('grow sm:grow-0')
-                        .props('filled dense input-class="text-slate-800 font-medium"')
+                        .props('filled dense input-class="text-slate-800 dark:text-neutral-100 font-medium"')
                     )
 
                 @ui.refreshable
@@ -147,8 +147,8 @@ def update_password_dialog(user_id: int):
             'my-auto max-h-[85vh] rounded-2xl'):
 
             with ui.row().classes('w-full items-center justify-between mb-2'):
-                ui.label(f"Update password").classes('text-2xl font-bold text-slate-700')
-                icon_button(icon="close", color="slate-700", tooltip="Close", on_click=dialog.close)
+                ui.label(f"Update password").classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
+                icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip="Close", on_click=dialog.close)
 
             with ui.column().classes('w-full gap-4 sm:gap-6 justify-between'):
                     current_password = user_input('Current password', icon='password', password=True, password_toggle_button=True)
@@ -180,8 +180,8 @@ def delete_user_dialog(user_id: int):
             'my-auto max-h-[85vh] rounded-2xl'):
 
             with ui.row().classes('w-full items-center justify-between mb-2'):
-                ui.label(f"Delete account").classes('text-2xl font-bold text-slate-700')
-                icon_button(icon="close", color="slate-700", tooltip="Close", on_click=dialog.close)
+                ui.label(f"Delete account").classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
+                icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip="Close", on_click=dialog.close)
 
             with ui.column().classes('w-full gap-4 sm:gap-6 justify-between'):
                     password = user_input('Current password', icon='lock', password=True, password_toggle_button=True)

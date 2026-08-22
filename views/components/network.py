@@ -54,27 +54,27 @@ def render_follow_button(current_user_id: int, target_user_id: int, is_friend: b
                 .on("mouseleave", lambda: following_button.set_text("Following"))
             )
         else:
-            submit_button(text="Follow", on_click=lambda: handle_follow(already_following=False)).classes(add="hover:color-slate-500", remove='w-full')
+            submit_button(text="Follow", on_click=lambda: handle_follow(already_following=False)).classes(add="hover:color-slate-500 hover:color-neutral-400", remove='w-full')
 
     follow_button(already_following=is_already_following, is_friend=is_friend)
 
 def render_follows(profile_user_id: int, current_user_id: int, can_see_follows: bool) -> None:
-    with ui.row().classes('items-center gap-3 text-slate-600 text-sm ml-1 md:text-base'):
+    with ui.row().classes('items-center gap-3 text-slate-600 dark:text-neutral-300 text-sm ml-1 md:text-base'):
         render_follower_count(profile_user_id=profile_user_id, current_user_id=current_user_id, can_see_follows=can_see_follows)
-        ui.label('·').classes('text-slate-300 font-bold select-none')
+        ui.label('·').classes('text-slate-300 dark:text-neutral-600 font-bold select-none')
         render_following_count(profile_user_id=profile_user_id, current_user_id=current_user_id, can_see_follows=can_see_follows)
 
 def render_follower_count(profile_user_id: int, current_user_id: int, can_see_follows: bool) -> None:
     follower_count = get_follower_count(user_id=profile_user_id)
 
     hover_classes = 'cursor-pointer group' if can_see_follows else 'cursor-default'
-    text_hover = 'group-hover:text-slate-900' if can_see_follows else ''
+    text_hover = 'group-hover:text-slate-900 dark:group-hover:text-neutral-50' if can_see_follows else ''
 
     follower_count_container = ui.row().classes(f'items-center gap-1 transition-colors {hover_classes}')
 
     with follower_count_container:
-        ui.label(follower_count).classes(f'text-slate-800 {text_hover} font-bold')
-        ui.label("followers").classes(f'text-slate-500 {text_hover}')
+        ui.label(follower_count).classes(f'text-slate-800 dark:text-neutral-100 {text_hover} font-bold')
+        ui.label("followers").classes(f'text-slate-500 dark:text-neutral-400 {text_hover}')
 
     if can_see_follows:
         follower_count_container.on("click", lambda: follow_dialog(profile_user_id=profile_user_id, current_user_id=current_user_id, start_on_followers=True))
@@ -83,13 +83,13 @@ def render_following_count(profile_user_id: int, current_user_id: int, can_see_f
     following_count = get_following_count(user_id=profile_user_id)
 
     hover_classes = 'cursor-pointer group' if can_see_follows else 'cursor-default'
-    text_hover = 'group-hover:text-slate-900' if can_see_follows else ''
+    text_hover = 'group-hover:text-slate-900 dark:group-hover:text-neutral-50' if can_see_follows else ''
 
     following_count_container = ui.row().classes(f'items-center gap-1 transition-colors {hover_classes}')
 
     with following_count_container:
-        ui.label(following_count).classes(f'text-slate-800 {text_hover} font-bold')
-        ui.label("following").classes(f'text-slate-500 {text_hover}')
+        ui.label(following_count).classes(f'text-slate-800 dark:text-neutral-100 {text_hover} font-bold')
+        ui.label("following").classes(f'text-slate-500 dark:text-neutral-400 {text_hover}')
 
     if can_see_follows:
         following_count_container.on("click", lambda: follow_dialog(profile_user_id=profile_user_id, current_user_id=current_user_id, start_on_followers=False))
@@ -97,7 +97,7 @@ def render_following_count(profile_user_id: int, current_user_id: int, can_see_f
 def render_user_list(users: list[User], current_user_id: int, dialog: ui.dialog, on_status_change: Callable) -> None:
     if not users:
         with ui.card().classes('w-full justify-center items-center h-48 sm:h-56 shadow-none'):
-            ui.label('Nothing here yet...').classes('w-full text-lg text-center text-slate-500')
+            ui.label('Nothing here yet...').classes('w-full text-lg text-center text-slate-500 dark:text-neutral-400')
     else:
         def handle_filter_users(users: list[User], query: str | None = None):
             filtered_users = filter_users(users=users, query=query)
@@ -116,9 +116,9 @@ def render_user_list(users: list[User], current_user_id: int, dialog: ui.dialog,
         def user_list(users: list[User]):
             with ui.scroll_area().classes('w-full flex-grow h-48 sm:h-56'):
                 for user in users:
-                    with ui.row().classes('w-full items-center justify-between p-4 rounded-xl group hover:bg-slate-50'):
+                    with ui.row().classes('w-full items-center justify-between p-4 rounded-xl group hover:bg-slate-50 dark:hover:bg-neutral-900'):
                         with ui.column().classes("cursor-pointer").on("click", lambda _, u=user: (dialog.close(), ui.navigate.to(f'/profile/{u.username}'))):
-                            ui.label(f"@{user.username}").classes('group-hover:text-slate-900 text-xl font-bold text-slate-700')
+                            ui.label(f"@{user.username}").classes('group-hover:text-slate-900 dark:group-hover:text-neutral-50 text-xl font-bold text-slate-700 dark:text-neutral-200')
                         if user.id != current_user_id:
                             render_follow_button(
                                 current_user_id=current_user_id,
@@ -137,10 +137,10 @@ def follow_dialog(profile_user_id: int, current_user_id: int, start_on_followers
             'my-auto max-h-[85vh] rounded-2xl'):
 
             with ui.row().classes('w-full items-center justify-between mb-2'):
-                ui.label(f"@{profile_user.username}").classes('text-2xl font-bold text-slate-700')
-                icon_button(icon="close", color="slate-700", tooltip="Close", on_click=dialog.close)
+                ui.label(f"@{profile_user.username}").classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
+                icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip="Close", on_click=dialog.close)
 
-            with ui.tabs().classes('w-full text-slate-700') as tabs:
+            with ui.tabs().classes('w-full text-slate-700 dark:text-neutral-200') as tabs:
                 followers_tab = ui.tab('Followers')
                 following_tab = ui.tab('Following')
                 friends_tab = ui.tab('Friends')
@@ -190,7 +190,7 @@ def render_search_users(users: list[User], user_id: int) -> None:
         return
 
     with ui.column().classes('w-full mt-4 sm:mb-2 gap-3 ml-10 pr-20'):
-        ui.label("Users").classes('text-xl font-bold text-slate-700 pl-2')
+        ui.label("Users").classes('text-xl font-bold text-slate-700 dark:text-neutral-200 pl-2')
 
         with ui.row().classes('w-full overflow-x-auto flex-nowrap gap-4 md:gap-6 pb-4 snap-x p-0 items-stretch'):
             for user in users:
@@ -200,7 +200,8 @@ def render_search_users(users: list[User], user_id: int) -> None:
 
                     (
                         ui.label(f"@{user.username}")
-                        .classes('font-bold text-slate-700 cursor-pointer truncate w-full text-center text-md sm:text-lg hover:text-slate-900')
+                        .classes('font-bold text-slate-700 dark:text-neutral-200 cursor-pointer truncate w-full '
+                        'text-center text-md sm:text-lg hover:text-slate-900 dark:hover:text-neutral-50')
                         .on('click', lambda _, u=user: ui.navigate.to(f'/profile/{u.username}'))
                     )
                     with ui.row().classes('w-full justify-center scale-90 sm:scale-100'):
