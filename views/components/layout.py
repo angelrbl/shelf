@@ -19,26 +19,35 @@ def render_header(current_path: str) -> None:
 
     ui_mode = app.storage.user.get("ui_mode", "light")
 
-    with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 backdrop-blur-md p-3 z-50').props('reveal'):
+    with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 dark:bg-neutral-900/60 backdrop-blur-md p-3 z-50').props('reveal'):
         with ui.row().classes('w-full items-center justify-between'):
-            ui.label("Shelf.").on('click', go_home).classes('text-3xl font-bold text-slate-700 text pl-5 hover:text-slate-500 cursor-pointer')
+            ui.label("Shelf.").on('click', go_home).classes('text-3xl font-bold text-slate-700 dark:text-neutral-200 '
+            'text pl-5 hover:text-slate-500 hover:dark:text-neutral-400 cursor-pointer')
 
             with ui.row().classes('hidden sm:!flex items-center gap-8'):
                 for item in NAV_ITEMS:
                     is_active = current_path == item["path"]
-                    color = 'text-slate-900 font-bold hover:text-slate-700' if is_active else 'text-slate-500 hover:text-slate-800'
+                    if is_active:
+                        color = 'text-slate-900 dark:text-neutral-50 font-bold hover:text-slate-700 hover:dark:text-neutral-300'
+                    else:
+                        color = 'text-slate-500 hover:text-slate-800 dark:text-neutral-400 dark:hover:text-neutral-100'
 
                     with ui.row().on('click', lambda _, path=item['path']: ui.navigate.to(path)).classes(f'items-center gap-2 cursor-pointer {color}'):
                         ui.icon(item['icon']).classes('text-xl')
                         ui.label(item['label']).classes('text-sm')
 
-            with ui.row().classes('gap-3 items-center justify-between'):
-                icon_button(
-                    icon=("brightness_medium" if ui_mode == "dark" else "dark_mode"),
-                    on_click=lambda: toggle_dark_mode(ui_mode=ui_mode),
-                    color="slate-700",
-                    tooltip=("Toggle light mode" if ui_mode == "dark" else "Toggle dark mode"))
-                ui.label("Log out").on('click', log_out).classes('cursor-pointer text-xl text-slate-700 text pr-5 hover:text-slate-500')
+            @ui.refreshable
+            def header_buttons(ui_mode: str):
+                with ui.row().classes('gap-3 items-center justify-between'):
+                    icon_button(
+                        icon=("brightness_medium" if ui_mode == "dark" else "dark_mode"),
+                        on_click=lambda: (toggle_dark_mode(), header_buttons.refresh(ui_mode="dark" if ui_mode == "light" else "light")),
+                        color="slate-600",
+                        dark="neutral-300",
+                        tooltip=("Toggle light mode" if ui_mode == "dark" else "Toggle dark mode"))
+                    ui.label("Log out").on('click', log_out).classes('cursor-pointer text-xl text-slate-700 dark:text-neutral-200 text pr-5 hover:text-slate-500 hover:dark:text-neutral-400')
+
+            header_buttons(ui_mode=ui_mode)
 
 def render_mobile_bottom_bar(current_path: str) -> None:
     with ui.row().classes(
