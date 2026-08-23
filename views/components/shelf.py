@@ -63,7 +63,8 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                 book = user_book.book
 
                 with ui.carousel_slide(name=book.id):
-                    with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-800 hover:shadow-md transition-all'):
+                    with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 '
+                    'bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
                         with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
                                 with ui.column().classes('col-span-1 w-full justify-center items-center'):
                                     (
@@ -100,7 +101,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
 
         section_title(icon="emoji_events", text="Top shelf")
 
-        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-800 hover:shadow-md transition-all'):
+        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
 
                 for rank in range(1, max_top_books+1):
@@ -169,7 +170,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
 
         section_title(icon="star", text="Most wished")
 
-        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-800 hover:shadow-md transition-all'):
+        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
 
                 for user_book in most_wished_shelf:

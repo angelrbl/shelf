@@ -30,10 +30,10 @@ def my_shelf_page() -> None:
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-end'):
-            ui.label(f"My Shelf").classes("text-3xl text-slate-700 font-medium")
+            ui.label(f"My Shelf").classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
             with ui.row().classes('items-center gap-1 cursor-pointer group').on('click', lambda: ui.navigate.to('/search')):
-                ui.icon("add").classes('text-slate-700 font-bold group-hover:text-slate-500')
-                ui.label("Add books").classes('text-slate-700 font-bold group-hover:text-slate-500')
+                ui.icon("add").classes('text-slate-700 dark:text-neutral-200 font-bold group-hover:text-slate-500 dark:group-hover:text-neutral-400')
+                ui.label("Add books").classes('text-slate-700 dark:text-neutral-200 font-bold group-hover:text-slate-500 dark:group-hover:text-neutral-400')
 
         ui.separator().classes('w-full mb-5')
 

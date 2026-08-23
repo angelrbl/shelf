@@ -47,12 +47,30 @@ def apply_theme() -> None:
 STATE_COLORS = {
     BookState.READ: "!bg-green-700 text-green-100",
     BookState.WISHED: "!bg-blue-700 text-blue-100",
-    BookState.READING: "!bg-orange-800 text-orange-100",
+    BookState.READING: "!bg-orange-800 text-orange-100 dark:!bg-orange-700",
     BookState.DROPPED: "!bg-red-700 text-red-100"
 }
 
 RANK_COLORS = {
     1: 'text-amber-500',
-    2: 'text-zinc-500',
-    3: 'text-orange-800'
+    2: 'text-zinc-500 dark:!text-zinc-400',
+    3: 'text-orange-800 dark:!text-orange-700'
+}
+
+CHART_COLORS_LIGHT = {
+    'pie_series': ['#6366f1', '#3b82f6', '#14b8a6', '#f59e0b', '#f43f5e', '#8b5cf6'],
+    'pie_border': '#ffffff',
+    'legend_text': '#475569',
+    'heatmap_gradient': ['#e0e7ff', '#818cf8', '#312e81'],
+    'heatmap_empty': '#f8fafc',
+    'heatmap_border': '#ffffff',
+}
+
+CHART_COLORS_DARK = {
+    'pie_series': ['#818cf8', '#60a5fa', '#2dd4bf', '#fbbf24', '#fb7185', '#a78bfa'],
+    'pie_border': '#262626',
+    'legend_text': '#d4d4d4',
+    'heatmap_gradient': ['#312e81', '#818cf8', '#c7d2fe'],
+    'heatmap_empty': '#262626',
+    'heatmap_border': '#404040',
 }

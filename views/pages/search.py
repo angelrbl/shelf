@@ -25,7 +25,7 @@ def search_page() -> None:
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-0 pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-end mb-5'):
-            ui.label(f"Search").classes("text-3xl text-slate-700 font-medium")
+            ui.label(f"Search").classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
                     
         ui.separator().classes('w-full mb-5 sm:mb-10')
         
