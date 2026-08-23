@@ -23,7 +23,13 @@ def toggle_dark_mode() -> None:
 
     dark.toggle()
 
-    app.storage.user["ui_mode"] = "dark" if dark.value else "light"
+    if dark.value:
+        app.storage.user["ui_mode"] = "dark"
+    else:
+        app.storage.user.pop('ui_mode', 'light')
+
+    if 'stats_refresh' in app.storage.client:
+        app.storage.client['stats_refresh']()
 
 def apply_theme() -> None:
     hide_scrollbar()

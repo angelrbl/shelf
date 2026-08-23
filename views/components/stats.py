@@ -105,22 +105,27 @@ def render_insights(user_id: int) -> None:
                 stats_card(stat=f"{float(average_book_rating(user_id=user_id)):.1f}", desktop_label="average rating", mobile_label="avg rating")
 
 def render_user_stats(user_id: int) -> None:
-
-    ui_mode = app.storage.user.get('ui_mode', 'light')
-
     with ui.column().classes('w-full mx-auto gap-4 px-4 mt-4'):
     
         section_title(icon="bar_chart", text="your stats")
 
-        with ui.row().classes('w-full flex flex-col sm:flex-row gap-4 items-stretch'):
-            with ui.card().classes('w-full sm:w-[350px] shrink-0 p-6 rounded-2xl shadow-sm border border-slate-100 '
-            'dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all flex flex-col'):
-                with ui.column().classes('w-full justify-between items-center'):
-                    ui.label("Read books by genre").classes('text-lg font-bold text-slate-700 dark:text-neutral-200')
-                    books_by_genre_piechart(user_id=user_id, ui_mode=ui_mode)
+        @ui.refreshable
+        def user_stats():
+            ui_mode = app.storage.user.get('ui_mode', 'light')
 
-            with ui.card().classes('w-full flex-1 p-6 rounded-2xl shadow-sm border border-slate-100 '
-            'dark:border-neutral-800 bg-white dark:!bg-neutral-800 hover:shadow-md transition-all overflow-x-auto flex flex-col'):
-                with ui.column().classes('w-full min-w-[600px]'):
-                    ui.label("Average pages read this year").classes('text-lg font-bold text-slate-700 dark:text-neutral-200 self-start sm:self-center mb-2')
-                    pages_read_heatmap(user_id=user_id, ui_mode=ui_mode)
+            with ui.row().classes('w-full flex flex-col sm:flex-row gap-4 items-stretch'):
+                with ui.card().classes('w-full sm:w-[350px] shrink-0 p-6 rounded-2xl shadow-sm border border-slate-100 '
+                'dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all flex flex-col'):
+                    with ui.column().classes('w-full justify-between items-center'):
+                        ui.label("Read books by genre").classes('text-lg font-bold text-slate-700 dark:text-neutral-200')
+                        books_by_genre_piechart(user_id=user_id, ui_mode=ui_mode)
+
+                with ui.card().classes('w-full flex-1 p-6 rounded-2xl shadow-sm border border-slate-100 '
+                'dark:border-neutral-800 bg-white dark:!bg-neutral-800 hover:shadow-md transition-all overflow-x-auto flex flex-col'):
+                    with ui.column().classes('w-full min-w-[600px]'):
+                        ui.label("Average pages read this year").classes('text-lg font-bold text-slate-700 dark:text-neutral-200 self-start sm:self-center mb-2')
+                        pages_read_heatmap(user_id=user_id, ui_mode=ui_mode)
+
+            app.storage.client['stats_refresh'] = user_stats.refresh
+
+        user_stats()
