@@ -9,7 +9,7 @@ def login_page() -> None:
     apply_theme()
     
     with ui.card().classes('absolute-center w-80 sm:w-100 shadow-lg rounded-lg'):
-        ui.label("Shelf.").classes('text-3xl font-bold w-full mb-4 text-slate-700 text-center pt-5')
+        ui.label("Shelf.").classes('text-3xl font-bold w-full mb-4 text-slate-700 dark:text-neutral-200 text-center pt-5')
         with ui.tabs().classes('w-full') as tabs:
             login_tab = ui.tab('Log In', icon='login')
             register_tab = ui.tab('Register', icon='person_add')

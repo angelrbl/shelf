@@ -15,16 +15,16 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
 
         ui.image(book.cover_url).classes('h-24 sm:h-56 w-full object-contain shrink-0')
         with ui.column().classes('p-2.5 sm:p-5 pt-0 gap-1 sm:pt-1 flex-1 justify-between flex flex-col w-full'):
-            ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2')
-            ui.label(book.author).classes('text-xs text-slate-500')
+            ui.label(book.title).classes('font-semibold text-sm w-full line-clamp-2 text-slate-900 dark:text-neutral-50')
+            ui.label(book.author).classes('text-xs text-slate-500 dark:text-neutral-400')
 
             ui.space()
             
             with ui.row().classes('w-full mt-2 justify-between items-center'):
-                color_class = RANK_COLORS.get(rank, "text-slate-600")
+                color_class = RANK_COLORS.get(rank, "text-slate-600 dark:text-neutral-300")
                 if not rank:
                     current_state = user_book.state
-                    color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700")
+                    color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700 dark:text-neutral-200 dark:bg-neutral-800")
                     
                     ui.badge(user_book.state.value.title()).classes(f'{color_classes} p-1.75').props('rounded')
                 else:
@@ -36,9 +36,9 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
 def add_book_card(on_click: callable) -> None:
     with ui.card().on('click', on_click).classes(
         'w-full h-full min-h-[200px] sm:min-h-[300px] items-center justify-center cursor-pointer '
-        'bg-transparent shadow-sm hover:shadow-md border border-dashed border-gray-700'
+        'bg-transparent shadow-sm hover:shadow-md border border-dashed border-slate-700 dark:border-neutral-200'
     ):
-        ui.label('+ Add Book').classes('text-gray-700')
+        ui.label('+ Add Book').classes('text-slate-700 dark:text-neutral-200')
 
 def render_currently_reading(user_id: int | None = None, currently_reading_books: list[UserBook] | None = None) -> None:
     if not currently_reading_books:
@@ -53,7 +53,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
 
         has_multiple_books = len(currently_reading_books) > 1
 
-        carousel_props = 'animated swipeable control-text-color=slate-500'
+        carousel_props = 'animated swipeable'
         if has_multiple_books:
             carousel_props += ' navigation padding'
 
@@ -63,7 +63,8 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                 book = user_book.book
 
                 with ui.carousel_slide(name=book.id):
-                    with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 bg-white hover:shadow-md transition-all'):
+                    with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 '
+                    'bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
                         with ui.grid().classes('w-full grid-cols-1 sm:grid-cols-3 gap-6 items-stretch'):
                                 with ui.column().classes('col-span-1 w-full justify-center items-center'):
                                     (
@@ -73,22 +74,22 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                     )
                         
                                 with ui.column().classes('col-span-1 sm:col-span-2 w-full h-full justify-between gap-1'):
-                                    ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800')
-                                    ui.label(book.author).classes('text-lg text-slate-500 font-medium')
+                                    ui.label(book.title).classes('text-2xl sm:text-3xl font-bold leading-tight text-slate-800 dark:text-neutral-100')
+                                    ui.label(book.author).classes('text-lg text-slate-500 dark:text-neutral-400 font-medium')
                         
                                     with ui.row().classes('w-full justify-between pr-4 mt-2 mb-4 items-center'):
                                         if book.genres:
                                             genres = book.genres.split(", ")
                                             with ui.row().classes('mt-2 gap-2'):
                                                 for genre in genres[0:3]:
-                                                    ui.badge(genre.title()).classes('bg-slate-100 px-2.5 py-1 font-semibold').props('rounded')
-                                        ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 mt-2')
+                                                    ui.badge(genre.title()).classes('bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 font-semibold').props('rounded')
+                                        ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
                         
                                     ui.separator()
                                     ui.space()
 
                                     if user_book.start_date:
-                                        with ui.row().classes('w-full items-center justify-center sm:justify-start gap-2 text-slate-500'):
+                                        with ui.row().classes('w-full items-center justify-center sm:justify-start gap-2 text-slate-500 dark:text-neutral-400'):
                                             ui.icon('calendar_today').classes('text-lg')
                                             ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
 
@@ -100,7 +101,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
 
         section_title(icon="emoji_events", text="Top shelf")
 
-        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 bg-white hover:shadow-md transition-all'):
+        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
 
                 for rank in range(1, max_top_books+1):
@@ -139,7 +140,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
                                     on_click=lambda bid=user_book.book_id: handle_remove_top_shelf_book(book_id=bid),
                                     tooltip="Remove book from top shelf"
                                 ).classes(
-                                    'absolute top-2 right-2 bg-slate-900/60 hover:bg-red-600 '
+                                    'absolute top-2 right-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-red-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
                                 ).props('dense flat size=sm')
 
@@ -169,7 +170,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
 
         section_title(icon="star", text="Most wished")
 
-        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 bg-white hover:shadow-md transition-all'):
+        with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
 
                 for user_book in most_wished_shelf:
@@ -197,7 +198,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
                                     on_click=lambda bid=user_book.book_id: handle_remove_most_wished_book(user_id=current_user_id, book_id=bid),
                                     tooltip="Remove book from most wished"
                                 ).classes(
-                                    'absolute top-2 right-2 bg-slate-900/60 hover:bg-red-600 '
+                                    'absolute top-2 right-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-red-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
                                 ).props('dense flat size=sm')
 
@@ -207,7 +208,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
                                     on_click=lambda bid=user_book.book_id: handle_start_reading(user_id=current_user_id, book_id=bid),
                                     tooltip="Start reading and remove from most wished"
                                 ).classes(
-                                    'absolute top-2 left-2 bg-slate-900/60 hover:bg-blue-600 '
+                                    'absolute top-2 left-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-blue-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
                                 ).props('dense flat size=sm')
 
@@ -282,7 +283,7 @@ def render_shelf(user_shelf: list, page: int = 1, books_per_page: int = 9) -> No
                 max=total_pages,
                 value=page,
                 on_change=lambda e: render_shelf.refresh(user_shelf=user_shelf, page=e.value, books_per_page=books_per_page)
-            ).props('rounded color=slate-7')
+            ).props('rounded')
 
 def render_shelf_search_dialog(user_id: int, on_close: callable, handle_add: callable, initial_state: BookState | None = None) -> None:
     user_shelf = get_user_shelf(user_id=user_id)
@@ -297,8 +298,8 @@ def render_shelf_search_dialog(user_id: int, on_close: callable, handle_add: cal
             'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl'):
                 with ui.column().classes('w-full gap-3'):
                     with ui.row().classes('w-full items-center justify-between mb-2'):
-                        ui.label(f"Select a book").classes('text-2xl font-bold text-slate-700')
-                        icon_button(icon="close", color="slate-700", tooltip="Close", on_click=dialog.close)
+                        ui.label(f"Select a book").classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
+                        icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip="Close", on_click=dialog.close)
 
                     with ui.row().classes('w-full max-w-6xl items-center gap-3 flex-col sm:flex-row'):
                         query = (
