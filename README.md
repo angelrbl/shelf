@@ -37,6 +37,7 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 - **Account & privacy settings** — dedicated settings page for account details and privacy controls.
 - **Reading stats** — yearly totals, average rating, genre breakdown, and a reading activity heatmap.
 - **Auth & profile** — login and a personal profile page.
+- **Light & dark mode** — toggle between light and dark themes from the header; your preference is remembered between sessions.
 
 > Not every feature is fully polished yet — this is a work in progress.
 
@@ -45,6 +46,17 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
 
 > Try out the demo app: [shelf on Render](https://shelf-mymi.onrender.com)
+
+<table>
+  <tr>
+    <td><img src="static/dark-mode.png" width="400"></td>
+    <td><img src="static/mobile.png" width="200"></td>
+  </tr>
+  <tr>
+    <td align="center">Dark mode</td>
+    <td align="center">Mobile</td>
+  </tr>
+</table>
 
 ## Tech stack
 
@@ -114,7 +126,7 @@ python main.py
 - [x] Richer stats & dashboards
 - [x] Deploy Shelf on the web
 - [ ] Multiple language support (en/es)
-- [ ] UI tweaks and appearance; dark mode
+- [x] UI tweaks and appearance; dark mode
 
 ## License
 
