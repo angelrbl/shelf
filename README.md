@@ -47,16 +47,19 @@ https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
 
 > Try out the demo app: [shelf on Render](https://shelf-mymi.onrender.com)
 
-<table>
-  <tr>
-    <td><img src="static/dark-mode.png" width="400"></td>
-    <td><img src="static/mobile.png" width="200"></td>
-  </tr>
-  <tr>
-    <td align="center">Dark mode</td>
-    <td align="center">Mobile</td>
-  </tr>
-</table>
+<br>
+
+<p align="center">
+  <img src="static/dark-mode.png" width="100%">
+  <br>
+  <em>Dark mode</em>
+</p>
+
+<p align="center">
+  <img src="static/mobile.png" width="280">
+  <br>
+  <em>Mobile</em>
+</p>
 
 ## Tech stack
 
