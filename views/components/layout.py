@@ -1,6 +1,7 @@
 from nicegui import ui, app
 
 from views.theme import toggle_dark_mode
+from views.i18n import switch_language
 from views.components.core import icon_button
 
 NAV_ITEMS = [
@@ -18,13 +19,14 @@ def render_header(current_path: str) -> None:
         go_home()
 
     ui_mode = app.storage.user.get("ui_mode", "light")
+    lang = app.storage.user.get("lang", "en")
 
-    with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 dark:bg-neutral-900/60 backdrop-blur-md p-3 z-50').props('reveal'):
-        with ui.row().classes('w-full items-center justify-between'):
+    with ui.header(fixed=True, bordered=True).classes('bg-slate-50/60 dark:bg-neutral-900/60 backdrop-blur-md px-6 sm:px-8 py-2.5 z-50').props('reveal'):
+        with ui.row().classes('w-full items-center justify-between relative'):
             ui.label("Shelf.").on('click', go_home).classes('text-3xl font-bold text-slate-700 dark:text-neutral-200 '
-            'text pl-5 hover:text-slate-500 hover:dark:text-neutral-400 cursor-pointer')
+            'text hover:text-slate-500 hover:dark:text-neutral-400 cursor-pointer')
 
-            with ui.row().classes('hidden sm:!flex items-center gap-8'):
+            with ui.row().classes('hidden sm:!flex items-center gap-8 absolute left-1/2 -translate-x-1/2'):
                 for item in NAV_ITEMS:
                     is_active = current_path == item["path"]
                     if is_active:
@@ -38,14 +40,33 @@ def render_header(current_path: str) -> None:
 
             @ui.refreshable
             def header_buttons(ui_mode: str):
-                with ui.row().classes('gap-3 items-center justify-between'):
+                with ui.row().classes('gap-2 sm:gap-3 items-center justify-between'):
                     icon_button(
                         icon=("brightness_medium" if ui_mode == "dark" else "dark_mode"),
                         on_click=lambda: (toggle_dark_mode(), header_buttons.refresh(ui_mode="dark" if ui_mode == "light" else "light")),
                         color="slate-600",
                         dark="neutral-300",
                         tooltip=("Toggle light mode" if ui_mode == "dark" else "Toggle dark mode"))
-                    ui.label("Log out").on('click', log_out).classes('cursor-pointer text-xl text-slate-700 dark:text-neutral-200 text pr-5 hover:text-slate-500 hover:dark:text-neutral-400')
+
+                    ui.separator().props('vertical').classes('h-4 my-auto bg-slate-200 dark:bg-neutral-700')
+
+                    with ui.row().classes('gap-1 items-center justify-between'):
+                        (
+                            ui.label('en').classes(f'cursor-pointer text-md sm:text-xl {'font-bold' if lang == 'en' else ''} '
+                            'text-slate-700 dark:text-neutral-200 hover:text-slate-500 hover:dark:text-neutral-400')
+                            .on("click", lambda: switch_language(lang='en'))
+                        )
+                        ui.label('/').classes('text-xl text-slate-700 dark:text-neutral-200')
+                        (
+                            ui.label('es').classes(f'cursor-pointer text-md sm:text-xl {'font-bold' if lang == 'es' else ''} '
+                            'text-slate-700 dark:text-neutral-200 hover:text-slate-500 hover:dark:text-neutral-400')
+                            .on("click", lambda: switch_language(lang='es'))
+                        )
+
+                    ui.separator().props('vertical').classes('h-4 my-auto bg-slate-200 dark:bg-neutral-700')
+                    
+                    ui.label("Log out").on('click', log_out).classes('cursor-pointer text-md sm:text-xl text-slate-700 dark:text-neutral-200 '
+                    'hover:text-slate-500 hover:dark:text-neutral-400')
 
             header_buttons(ui_mode=ui_mode)
 
