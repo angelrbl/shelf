@@ -1,4 +1,5 @@
 {
     "_comment": "Testing",
-    "test_key": "i am english"
+    "test_key": "i am english",
+    "test_fallback": "i am also english"
 }

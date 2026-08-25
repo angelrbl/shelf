@@ -31,6 +31,7 @@ from services.network import (
     search_users,
     update_settings
 )
+from services.i18n import Translator, DEFAULT_LANG
 
 __all__ = [
     "search_books",
@@ -71,5 +72,7 @@ __all__ = [
     "get_follower_count",
     "filter_users",
     "search_users",
-    "update_settings"
+    "update_settings",
+    "Translator",
+    "DEFAULT_LANG"
 ]

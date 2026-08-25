@@ -1,38 +1,30 @@
 import json
 import os
+from pathlib import Path
+
+LOCALES_PATH = Path(__file__).parent.parent / 'locales'
+DEFAULT_LANG = 'en'
 
 class Translator:
-    def __init__(self, default_lang = "en"):
-        self.current_lang = default_lang
-        self.dictionaries = {}
+    def __init__(self) -> None:
+        self.dictionaries: dict[str, dict] = {}
         self._load_langs()
 
-    def _load_langs(self):
-        locales_path =  "locales"
-
-        for file in os.listdir(locales_path):
+    def _load_langs(self) -> None:
+        for file in os.listdir(LOCALES_PATH):
             if file.endswith(".json"):
-                lang = file.split('.')[0]
-                with open(f"{locales_path}/{file}", "r", encoding="utf-8") as f:
+                lang = os.path.splitext(file)[0]
+                with open(LOCALES_PATH / file, "r", encoding="utf-8") as f:
                     self.dictionaries[lang] = json.load(f)
 
-    def switch_lang(self, new_lang):
-        if new_lang in self.dictionaries:
-            self.current_lang = new_lang
-        else:
-            raise ValueError(f"Language {new_lang} not supported yet.")
-
-    def _(self, key, **kwargs):
-        dictionary = self.dictionaries.get(self.current_lang, {})
-
-        text = dictionary.get(key, f"[{key}]")
+    def translate(self, lang:str, key:str, **kwargs) -> str:
+        dictionary = self.dictionaries.get(lang) or self.dictionaries.get(DEFAULT_LANG, {})
+        text = dictionary.get(key) or self.dictionaries.get(DEFAULT_LANG, {}).get(key, f"[{key}]")
 
         if kwargs:
-            return text.format(**kwargs)
+            try:
+                return text.format(**kwargs)
+            except (KeyError, IndexError):
+                return text
 
         return text
-
-_instance = Translator()
-
-_ = _instance._
-switch_lang = _instance.switch_lang

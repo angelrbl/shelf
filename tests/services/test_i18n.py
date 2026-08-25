@@ -1,20 +1,24 @@
 import pytest
 
-from services.i18n import _, switch_lang
+from services.i18n import Translator
 
-def test_valid_key():
-    assert _("test_key") == "i am english"
+@pytest.fixture
+def _() -> str:
+    translator = Translator()
 
-def test_invalid_key():
-    assert _("test_key1") == "[test_key1]"
+    def translate(lang: str, key: str, **kwargs):
+        return translator.translate(key=key, lang=lang, **kwargs)
 
-def test_switch_language_valid():
-    assert _("test_key") == "i am english"
+    return translate
 
-    switch_lang(new_lang='es')
+def test_translation_valid_key(_):
+    assert _(lang='en', key='test_key') == 'i am english'
 
-    assert _("test_key") == "soy español"
+def test_translation_another_language(_):
+    assert _(lang='es', key='test_key') == 'soy español'
 
-def test_switch_language_invalid():
-    with pytest.raises(ValueError):
-        switch_lang(new_lang="jp")
+def test_translation_fallback(_):
+    assert _(lang='es', key='test_fallback') == 'i am also english'
+
+def test_translation_invalid_key(_):
+    assert _(lang='en', key='test_fallback_2') == "[test_fallback_2]"
