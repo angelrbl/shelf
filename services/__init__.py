@@ -1,4 +1,4 @@
-from services.catalog import search_books
+from services.catalog import search_books, GoogleAPIError
 from services.library import (
     add_book,
     update_book_state,
@@ -34,6 +34,7 @@ from services.network import (
 
 __all__ = [
     "search_books",
+    "GoogleAPIError",
     "add_book",
     "update_book_state",
     "update_user_book",

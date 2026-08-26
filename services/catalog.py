@@ -7,6 +7,9 @@ from core import GOOGLE_BOOKS_API_KEY, get_session
 
 GOOGLE_BOOKS_API_URL = 'https://www.googleapis.com/books/v1/volumes'
 
+class GoogleAPIError(Exception):
+    pass
+
 def search_books(query: str, max_results: int=5, google_only: bool = False) -> list[Book]:
     if not query:
         return []
@@ -32,9 +35,10 @@ def _search_books_from_google_api(query: str, max_results: int=5) -> list[dict]:
         )
         response.raise_for_status()
         data = response.json()
-    except requests.exceptions.HTTPError as err:
+    except requests.exceptions.RequestException as err:
         print(f"Error with Google API: {err}")
-        data = {}
+
+        raise GoogleAPIError("Failed to fetch data from Google Books API. Please, try again.")
     books_data = []
 
     items = data.get("items") or []

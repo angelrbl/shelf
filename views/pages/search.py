@@ -1,6 +1,6 @@
-from nicegui import ui, app
+from nicegui import ui, app, run
 
-from services import search_books, search_users
+from services import search_books, search_users, GoogleAPIError
 
 from views.theme import apply_theme
 from views.components import (
@@ -31,33 +31,46 @@ def search_page() -> None:
         
         query_value = app.storage.user.pop('current_search_query', None)
 
-        def handle_search(search_query: str, max_results: int = 5, google_only: bool = False):
+        #async makes the function run at the same time as the ui
+        async def handle_search(search_query: str, max_results: int = 5, google_only: bool = False):
+
+            loading_spinner.visible = True
             if not search_query:
                 render_books.refresh(books=[])
                 render_search_users.refresh(users=[], user_id=user_id)
+                loading_spinner.visible = False
                 return
 
             if search_query[0] == '@':
                 clean_query = search_query[1:]
 
-                users = search_users(query=clean_query)
+                users = await run.io_bound(search_users, query=clean_query)
                 render_search_users.refresh(users=users, user_id=user_id)
                 render_books.refresh(books=[])
             else:
                 users = search_users(query=search_query)
                 render_search_users.refresh(users=users, user_id=user_id)
 
-                books = search_books(query=search_query, max_results=max_results, google_only=google_only)
-                render_books.refresh(books=books, on_search=lambda:handle_search(search_query=search_input.value, max_results=10, google_only=True))
+                try:
+                    #await waits for a response from the called function while running the ui (ui.spiner)
+                    books = await run.io_bound(search_books, query=search_query, max_results=max_results, google_only=google_only)
+                    render_books.refresh(books=books, on_search=lambda:handle_search(search_query=search_input.value, max_results=10, google_only=True))
+                except GoogleAPIError as e:
+                    ui.notify(str(e), type='negative')
+
+            loading_spinner.visible = False
 
         with ui.row().classes('w-full items-center gap-4 justify-between ml-10 pr-20 mb-4 sm:mb-6'):
             search_input = (
-                user_input(label="Search anything", icon="search", value=query_value)
+                user_input(label="Search anything (i.e 'Hamlet', '@shelf'...)", icon="search", value=query_value)
                 .classes(remove='w-full', add='flex-1')
                 .props(remove='outlined')
                 .on("keydown.enter", lambda: handle_search(search_query=search_input.value))
             )
             submit_button(text="Search", on_click=lambda: handle_search(search_query=search_input.value)).classes(remove='w-full shadow')
+
+        loading_spinner = ui.spinner(size='lg').classes('self-center')
+        loading_spinner.visible = False
 
         if query_value:
             if query_value[0] == '@':
