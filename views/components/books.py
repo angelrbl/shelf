@@ -2,9 +2,10 @@ import math
 from nicegui import ui, app
 from typing import Callable
 
-from models import Book, BookState, UserBook
+from models import Book
 from services import get_user_book_by_google_id
 
+from views.i18n import _
 from views.components.book_dialog import book_dialog
 
 def book_card(book: Book) -> None:
@@ -46,7 +47,7 @@ def render_books(books: list, page: int = 1, books_per_page: int = 10, on_search
     books_for_current_page = books[start_idx:end_idx]
 
     with ui.column().classes('w-full gap-3'):
-        ui.label("Books").classes('ml-10 pr-20 text-xl font-bold text-slate-700 dark:text-neutral-200 mt-2 pl-2')
+        ui.label(_("books_title")).classes('ml-10 pr-20 text-xl font-bold text-slate-700 dark:text-neutral-200 mt-2 pl-2')
 
         with ui.grid().classes('w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 p-10 pt-0'):
             for book in books_for_current_page:
@@ -62,6 +63,6 @@ def render_books(books: list, page: int = 1, books_per_page: int = 10, on_search
                 ).props('rounded')
 
         with ui.row().classes('w-full items-center gap-1 justify-center mb-10'):
-            ui.label("Can't find your books?,").classes('text-lg text-slate-700 dark:text-neutral-200')
-            ui.label("search globally.").on('click', on_search).classes('text-lg text-slate-700 dark:text-neutral-200'
+            ui.label(_("books_cant_find")).classes('text-lg text-slate-700 dark:text-neutral-200')
+            ui.label(_("books_search_globally")).on('click', on_search).classes('text-lg text-slate-700 dark:text-neutral-200'
             ' hover:text-slate-500 dark:hover:text-neutral-400 transition-colors cursor-pointer text-bold')

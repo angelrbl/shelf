@@ -5,7 +5,7 @@ _translator = Translator()
 
 def _(key: str, **kwargs) -> str:
     lang = app.storage.user.get('lang', DEFAULT_LANG)
-    return _translator.translate(key, lang, **kwargs)
+    return _translator.translate(key=key, lang=lang, **kwargs)
 
 def switch_language(lang: str) -> None:
     if lang == 'en':

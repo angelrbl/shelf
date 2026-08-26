@@ -1,13 +1,13 @@
 from nicegui import ui, app
 
 from views.theme import toggle_dark_mode
-from views.i18n import switch_language
+from views.i18n import switch_language, _
 from views.components.core import icon_button
 
 NAV_ITEMS = [
-    {'label': 'My Shelf', 'icon': 'dashboard', 'path': '/my_shelf'},
-    {'label': 'Search', 'icon': 'search', 'path': '/search'},
-    {'label': 'Profile', 'icon': 'person', 'path': '/profile'},
+    {'label': 'nav_my_page', 'icon': 'dashboard', 'path': '/my_shelf'},
+    {'label': 'nav_search', 'icon': 'search', 'path': '/search'},
+    {'label': 'nav_profile', 'icon': 'person', 'path': '/profile'},
 ]
 
 def render_header(current_path: str) -> None:
@@ -36,7 +36,7 @@ def render_header(current_path: str) -> None:
 
                     with ui.row().on('click', lambda _, path=item['path']: ui.navigate.to(path)).classes(f'items-center gap-2 cursor-pointer {color}'):
                         ui.icon(item['icon']).classes('text-xl')
-                        ui.label(item['label']).classes('text-sm')
+                        ui.label(_(item['label'])).classes('text-sm')
 
             @ui.refreshable
             def header_buttons(ui_mode: str):
@@ -46,7 +46,7 @@ def render_header(current_path: str) -> None:
                         on_click=lambda: (toggle_dark_mode(), header_buttons.refresh(ui_mode="dark" if ui_mode == "light" else "light")),
                         color="slate-600",
                         dark="neutral-300",
-                        tooltip=("Toggle light mode" if ui_mode == "dark" else "Toggle dark mode"))
+                        tooltip=(_("nav_light_mode_tooltip") if ui_mode == "dark" else _("nav_dark_mode_tooltip")))
 
                     ui.separator().props('vertical').classes('h-4 my-auto bg-slate-200 dark:bg-neutral-700')
 
@@ -65,7 +65,7 @@ def render_header(current_path: str) -> None:
 
                     ui.separator().props('vertical').classes('h-4 my-auto bg-slate-200 dark:bg-neutral-700')
                     
-                    ui.label("Log out").on('click', log_out).classes('cursor-pointer text-md sm:text-xl text-slate-700 dark:text-neutral-200 '
+                    ui.label(_("nav_log_out")).on('click', log_out).classes('cursor-pointer text-md sm:text-xl text-slate-700 dark:text-neutral-200 '
                     'hover:text-slate-500 hover:dark:text-neutral-400')
 
             header_buttons(ui_mode=ui_mode)
