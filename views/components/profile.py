@@ -10,6 +10,7 @@ from services import (
     get_most_wished
 )
 
+from views.i18n import _
 from views.components import (
     icon_button,
     render_insights,
@@ -35,7 +36,7 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
     if not profile_user:
         with ui.column().classes('w-full items-center justify-center mt-12 pb-28'):
-            ui.label('User not found').classes('text-2xl text-red-500 font-semibold')
+            ui.label(_("profile_user_not_found")).classes('text-2xl text-red-500 font-semibold')
         return
 
     # UI STARTS HERE
@@ -57,7 +58,7 @@ def render_profile_body(current_user: User, requested_username: str | None):
 
             with ui.row().classes('sm:pt-3 sm:pr-1'):
                 if is_owner:
-                    icon_button(icon='settings', color='slate-500', dark="neutral-400", on_click=lambda: ui.navigate.to('/settings'), tooltip="Open settings").classes('text-lg')
+                    icon_button(icon='settings', color='slate-500', dark="neutral-400", on_click=lambda: ui.navigate.to('/settings'), tooltip=_("profile_open_settings")).classes('text-lg')
                 else:
                     render_follow_button(
                         current_user_id=current_user.id,

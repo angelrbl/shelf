@@ -5,6 +5,7 @@ from models import UserBook, BookState
 from services import get_user_shelf, filter_user_shelf, get_unique_shelf_genres, update_top_shelf_rank, get_top_shelf, get_most_wished, toggle_most_wished, update_book_state
 
 from views.theme import STATE_COLORS, RANK_COLORS
+from views.i18n import _
 from views.components.core import section_title, user_input, user_select, icon_button
 from views.components.book_dialog import book_dialog
 
