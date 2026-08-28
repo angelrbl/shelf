@@ -27,7 +27,7 @@ def user_book_card(user_book: UserBook, on_click: callable, rank: int | None = N
                     current_state = user_book.state
                     color_classes = STATE_COLORS.get(current_state, "bg-slate-100 text-slate-700 dark:text-neutral-200 dark:bg-neutral-800")
                     
-                    ui.badge(user_book.state.value.title()).classes(f'{color_classes} p-1.75').props('rounded')
+                    ui.badge(_(f"bookstate_{user_book.state.value}")).classes(f'{color_classes} p-1.75').props('rounded')
                 else:
                     ui.label(f"#{rank}").classes(f"{color_class} text-bold text-xl")
                     
@@ -39,7 +39,7 @@ def add_book_card(on_click: callable) -> None:
         'w-full h-full min-h-[200px] sm:min-h-[300px] items-center justify-center cursor-pointer '
         'bg-transparent shadow-sm hover:shadow-md border border-dashed border-slate-700 dark:border-neutral-200'
     ):
-        ui.label('+ Add Book').classes('text-slate-700 dark:text-neutral-200')
+        ui.label(_("dialog_add_book")).classes('text-slate-700 dark:text-neutral-200')
 
 def render_currently_reading(user_id: int | None = None, currently_reading_books: list[UserBook] | None = None) -> None:
     if not currently_reading_books:
@@ -50,7 +50,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
 
     with ui.column().classes('w-full max-w-4xl mx-auto gap-4 sm:mt-8 px-4'):
 
-        section_title(icon="auto_stories", text="On the nightstand")
+        section_title(icon="auto_stories", text=_("shelf_on_the_nightstand"))
 
         has_multiple_books = len(currently_reading_books) > 1
 
@@ -84,7 +84,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                             with ui.row().classes('mt-2 gap-2'):
                                                 for genre in genres[0:3]:
                                                     ui.badge(genre.title()).classes('bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 font-semibold').props('rounded')
-                                        ui.label(f"{book.page_count} pages").classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
+                                        ui.label(_("dialog_page_count", pages=book.page_count)).classes('text-sm text-slate-400 dark:text-neutral-500 mt-2')
                         
                                     ui.separator()
                                     ui.space()
@@ -92,7 +92,7 @@ def render_currently_reading(user_id: int | None = None, currently_reading_books
                                     if user_book.start_date:
                                         with ui.row().classes('w-full items-center justify-center sm:justify-start gap-2 text-slate-500 dark:text-neutral-400'):
                                             ui.icon('calendar_today').classes('text-lg')
-                                            ui.label(f"Started: {user_book.start_date}").classes('text-sm font-medium')
+                                            ui.label(_("dialog_start_date", start_date=user_book.start_date)).classes('text-sm font-medium')
 
 @ui.refreshable
 def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list[UserBook], is_owner: bool=False, max_top_books: int = 5) -> None:
@@ -100,7 +100,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
 
     with ui.column().classes('w-full max-w-4xl mx-auto gap-4 px-4'):
 
-        section_title(icon="emoji_events", text="Top shelf")
+        section_title(icon="emoji_events", text=_("shelf_top_shelf"))
 
         with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
@@ -128,7 +128,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
                             if is_owner:
                                 def handle_remove_top_shelf_book(book_id: int):
                                     update_top_shelf_rank(user_id=current_user_id, book_id=book_id, new_top_shelf_rank=None)
-                                    ui.notify("Removed book from top shelf", type="positive")
+                                    ui.notify(_("shelf_removed_from_top_shelf"), type="positive")
                                     render_top_shelf.refresh(
                                         current_user_id=current_user_id,
                                         profile_user_id=profile_user_id,
@@ -139,7 +139,7 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
                                     icon="close", 
                                     color="white", 
                                     on_click=lambda bid=user_book.book_id: handle_remove_top_shelf_book(book_id=bid),
-                                    tooltip="Remove book from top shelf"
+                                    tooltip=_("shelf_remove_from_top_shelf")
                                 ).classes(
                                     'absolute top-2 right-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-red-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
@@ -163,13 +163,13 @@ def render_top_shelf(current_user_id: int, profile_user_id: int, top_shelf: list
 
     def handle_add_to_top_shelf(user_id: int, book_id: int, rank: int):
             update_top_shelf_rank(user_id=user_id, book_id=book_id, new_top_shelf_rank=rank)
-            ui.notify(f"Book added successfully to top shelf at #{rank}!", type="positive")
+            ui.notify(_("shelf_added_to_top_shelf", rank=rank), type="positive")
 
 @ui.refreshable
 def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_shelf: list[UserBook], is_owner: bool=False, max_wished: int = 5) -> None:
     with ui.column().classes('w-full max-w-4xl mx-auto gap-4 px-4'):
 
-        section_title(icon="star", text="Most wished")
+        section_title(icon="star", text=_("shelf_most_wished"))
 
         with ui.card().classes('w-full p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full flex-nowrap overflow-x-auto gap-6 pb-4 pt-4 px-2 snap-x snap-mandatory'):
@@ -197,7 +197,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
                                     icon="close", 
                                     color="white", 
                                     on_click=lambda bid=user_book.book_id: handle_remove_most_wished_book(user_id=current_user_id, book_id=bid),
-                                    tooltip="Remove book from most wished"
+                                    tooltip=_("shelf_remove_from_most_wished")
                                 ).classes(
                                     'absolute top-2 right-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-red-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
@@ -207,7 +207,7 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
                                     icon="bookmark_add", 
                                     color="white", 
                                     on_click=lambda bid=user_book.book_id: handle_start_reading(user_id=current_user_id, book_id=bid),
-                                    tooltip="Start reading and remove from most wished"
+                                    tooltip=_("shelf_start_reading_wished")
                                 ).classes(
                                     'absolute top-2 left-2 bg-slate-900/60 dark:bg-neutral-500/60 hover:bg-blue-600 '
                                     'text-white rounded-full z-10 p-1 transition-colors shadow-md'
@@ -231,22 +231,22 @@ def render_most_wished(current_user_id: int, profile_user_id: int, most_wished_s
 
     def handle_start_reading(user_id: int, book_id: int):
         update_book_state(user_id=user_id, book_id=book_id, new_state=BookState.READING)
-        ui.notify(f"Successfully started reading this book!", type="positive")
+        ui.notify(_("shelf_started_reading"), type="positive")
 
         handle_remove_most_wished_book(user_id=user_id, book_id=book_id, notify=False)
 
     def handle_add_to_most_wished(user_id: int, book_id: int):
         try:
             toggle_most_wished(user_id=user_id, book_id=book_id, status=True)
-            ui.notify("Book added to most wished!", type='positive')
+            ui.notify(_("shelf_added_to_most_wished"), type='positive')
         except ValueError as e:
-            ui.notify(str(e), type='negative')
+            ui.notify(_(str(e), max_limit=max_wished), type='negative')
 
     def handle_remove_most_wished_book(user_id: int, book_id: int, notify: bool = True):
         toggle_most_wished(user_id=user_id, book_id=book_id, status=False)
 
         if notify:
-            ui.notify("Removed book from top shelf", type="positive")
+            ui.notify(_("shelf_removed_from_most_wished"), type="positive")
 
         render_most_wished.refresh(
             current_user_id=current_user_id,
@@ -299,12 +299,12 @@ def render_shelf_search_dialog(user_id: int, on_close: callable, handle_add: cal
             'rounded-t-3xl sm:rounded-2xl rounded-b-3xl sm:rounded-b-2xl'):
                 with ui.column().classes('w-full gap-3'):
                     with ui.row().classes('w-full items-center justify-between mb-2'):
-                        ui.label(f"Select a book").classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
-                        icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip="Close", on_click=dialog.close)
+                        ui.label(_("shelf_select_a_book")).classes('text-2xl font-bold text-slate-700 dark:text-neutral-200')
+                        icon_button(icon="close", color="slate-700", dark="neutral-200", tooltip=_("dialog_close_tooltip"), on_click=dialog.close)
 
                     with ui.row().classes('w-full max-w-6xl items-center gap-3 flex-col sm:flex-row'):
                         query = (
-                            user_input(label="Search your books", icon="search")
+                            user_input(label=_("shelf_search_books"), icon="search")
                             .on('keydown.enter', lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value))
                             .on('blur', lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value))
                             .classes("sm:flex-1")
@@ -313,15 +313,15 @@ def render_shelf_search_dialog(user_id: int, on_close: callable, handle_add: cal
             
                         with ui.row().classes('w-full sm:w-auto gap-3 flex-1'):
                             state = user_select(
-                                label="State",
-                                options={None: "All states", **{state: state.value.title() for state in BookState}},
+                                label=_("book_state"),
+                                options={None: _("bookstate_all_states"), **{state: _(f"bookstate_{state.value}") for state in BookState}},
                                 value=initial_state,
                                 on_change=lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value),
                                 icon="bookmark_border"
                             ).classes(remove="w-full", add="flex-1 sm:w-44")
                             genre = user_select(
-                                label="Genre",
-                                options={None: "All genres", **{genre.lower(): genre for genre in get_unique_shelf_genres(shelf=user_shelf)}},
+                                label=_("book_genre"),
+                                options={None: _("book_all_genres"), **{genre.lower(): genre for genre in get_unique_shelf_genres(shelf=user_shelf)}},
                                 value=None,
                                 on_change=lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value),
                                 icon='book'

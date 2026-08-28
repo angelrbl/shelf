@@ -99,7 +99,7 @@ def toggle_most_wished(user_id: int, book_id: int, status: bool, max_limit: int 
             most_wished_count = session.execute(stmt).scalar()
             
             if most_wished_count >= max_limit:
-                raise ValueError(f"You can only have up to {max_limit} books in Most Wished.")
+                raise ValueError("error_too_many_wished_books")
             
         stmt = (
             update(UserBook)

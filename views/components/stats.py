@@ -4,6 +4,7 @@ from services import total_read_books, average_book_rating, total_read_books_thi
 
 from views.components.core import section_title
 from views.theme import CHART_COLORS_DARK, CHART_COLORS_LIGHT
+from views.i18n import _
 
 def stats_card(stat: int | float, desktop_label: str, mobile_label: str, border: bool = False) -> None:
     border_class = 'border-r border-slate-200 dark:border-neutral-700' if border else ''
@@ -30,7 +31,7 @@ def books_by_genre_piechart(user_id: int, ui_mode: str = 'light'):
         },
         'series': [
             {
-                'name': 'Genres',
+                'name': _("books_genres"),
                 'type': 'pie',
                 'radius': ['45%', '70%'],
                 'center': ['50%', '42%'],
@@ -60,7 +61,7 @@ def pages_read_heatmap(user_id: int, ui_mode: str = 'light') -> None:
     ui.echart({
         'tooltip': {
             'position': 'top',
-            'formatter': ' {c} pages read this day'
+            'formatter': ' {c} ' + _("stats_pages_read")
         },
         'visualMap': {
             'min': 0,
@@ -96,18 +97,18 @@ def pages_read_heatmap(user_id: int, ui_mode: str = 'light') -> None:
 def render_insights(user_id: int) -> None:
     with ui.column().classes('w-full max-w-4xl mx-auto gap-3 px-4 mb-2'):
 
-        section_title(icon='insights', text="insights")
+        section_title(icon='insights', text=_("stats_insights"))
 
         with ui.card().classes('w-full rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all'):
             with ui.row().classes('w-full justify-around gap-4 items-center'):
-                stats_card(stat=total_read_books(user_id=user_id), desktop_label="total read books", mobile_label="books", border=True)  
-                stats_card(stat=total_read_books_this_year(user_id=user_id), desktop_label="books read this year", mobile_label="this year", border=True)
-                stats_card(stat=f"{float(average_book_rating(user_id=user_id)):.1f}", desktop_label="average rating", mobile_label="avg rating")
+                stats_card(stat=total_read_books(user_id=user_id), desktop_label=_("stats_total_read_books"), mobile_label=_("stats_total_read_books_mobile"), border=True)  
+                stats_card(stat=total_read_books_this_year(user_id=user_id), desktop_label=_("stats_books_read_this_year"), mobile_label=_("stats_books_read_this_year_mobile"), border=True)
+                stats_card(stat=f"{float(average_book_rating(user_id=user_id)):.1f}", desktop_label=_("stats_average_book_rating"), mobile_label=_("stats_average_book_rating_mobile"))
 
 def render_user_stats(user_id: int) -> None:
     with ui.column().classes('w-full mx-auto gap-4 px-4 mt-4'):
     
-        section_title(icon="bar_chart", text="your stats")
+        section_title(icon="bar_chart", text=_("stats_your_stats"))
 
         @ui.refreshable
         def user_stats():
@@ -117,13 +118,13 @@ def render_user_stats(user_id: int) -> None:
                 with ui.card().classes('w-full sm:w-[350px] shrink-0 p-6 rounded-2xl shadow-sm border border-slate-100 '
                 'dark:border-neutral-800 bg-white dark:!bg-neutral-800/60 hover:shadow-md transition-all flex flex-col'):
                     with ui.column().classes('w-full justify-between items-center'):
-                        ui.label("Read books by genre").classes('text-lg font-bold text-slate-700 dark:text-neutral-200')
+                        ui.label(_("stats_read_by_genre")).classes('text-lg font-bold text-slate-700 dark:text-neutral-200')
                         books_by_genre_piechart(user_id=user_id, ui_mode=ui_mode)
 
                 with ui.card().classes('w-full flex-1 p-6 rounded-2xl shadow-sm border border-slate-100 '
                 'dark:border-neutral-800 bg-white dark:!bg-neutral-800 hover:shadow-md transition-all overflow-x-auto flex flex-col'):
                     with ui.column().classes('w-full min-w-[600px]'):
-                        ui.label("Average pages read this year").classes('text-lg font-bold text-slate-700 dark:text-neutral-200 self-start sm:self-center mb-2')
+                        ui.label(_("stats_avg_pages_this_year")).classes('text-lg font-bold text-slate-700 dark:text-neutral-200 self-start sm:self-center mb-2')
                         pages_read_heatmap(user_id=user_id, ui_mode=ui_mode)
 
             app.storage.client['stats_refresh'] = user_stats.refresh
