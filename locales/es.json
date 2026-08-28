@@ -44,7 +44,7 @@
     "dialog_save_in_my_shelf": "Guardar en mi shelf",
     "dialog_removed_notification": "Libro borrado de tu Shelf.",
     "dialog_updated_notification": "¡Libro actualizado!",
-    "dialog_date_error_notification": "La fecha de finalización no puede ser posterior a la de inicio",
+    "dialog_date_error_notification": "La fecha de inicio no puede ser posterior a la de finalización",
 
     "_book_states_comment": "Book States",
     "bookstate_wished": "Deseado",
@@ -154,5 +154,7 @@
     "error_user_does_not_exist": "El usuario no existe.",
     "error_user_no_longer_exists": "El usuario actual ya no existe.",
     "error_password_already_used": "Esta contraseña ya está en uso.",
-    "error_too_many_wished_books": "Solo puedes tener {max_limit} libros en tus Más Deseados."
+    "error_too_many_wished_books": "Solo puedes tener {max_limit} libros en tus Más Deseados.",
+    "error_google_book_api": "Error al cargar los datos de la API de Google Books. Por favo, inténtalo de nuevo.",
+    "error_wrong_date_order": "La fecha de finalización debe ser posterior a la de inicio"
 }

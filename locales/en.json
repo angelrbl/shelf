@@ -156,5 +156,6 @@
     "error_user_no_longer_exists": "Current user no longer exists.",
     "error_password_already_used": "This password is already being used.",
     "error_too_many_wished_books": "You can only have up to {max_limit} books in Most Wished.",
-    "error_google_book_api": "Failed to fetch data from Google Books API. Please, try again."
+    "error_google_book_api": "Failed to fetch data from Google Books API. Please, try again.",
+    "error_wrong_date_order": "End date must be older than starting date."
 }

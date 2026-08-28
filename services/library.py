@@ -17,7 +17,7 @@ def add_book(
     with get_session() as session:
         if start_date and end_date:
             if start_date > end_date:
-                raise ValueError("End date must be older than starting date.")
+                raise ValueError("error_wrong_date_order")
         
         if book.id is None:
             stmt = select(Book).where(Book.google_book_id == book.google_book_id)
