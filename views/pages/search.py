@@ -3,6 +3,7 @@ from nicegui import ui, app, run
 from services import search_books, search_users, GoogleAPIError
 
 from views.theme import apply_theme
+from views.i18n import _
 from views.components import (
     user_input,
     render_header,
@@ -25,7 +26,7 @@ def search_page() -> None:
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-6 md:px-0 py-4 gap-0 pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-end mb-5'):
-            ui.label(f"Search").classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
+            ui.label(_("search_title")).classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
                     
         ui.separator().classes('w-full mb-5 sm:mb-10')
         
@@ -56,18 +57,18 @@ def search_page() -> None:
                     books = await run.io_bound(search_books, query=search_query, max_results=max_results, google_only=google_only)
                     render_books.refresh(books=books, on_search=lambda:handle_search(search_query=search_input.value, max_results=10, google_only=True))
                 except GoogleAPIError as e:
-                    ui.notify(str(e), type='negative')
+                    ui.notify(_(str(e)), type='negative')
 
             loading_spinner.visible = False
 
         with ui.row().classes('w-full items-center gap-4 justify-between ml-10 pr-20 mb-4 sm:mb-6'):
             search_input = (
-                user_input(label="Search anything (i.e 'Hamlet', '@shelf'...)", icon="search", value=query_value)
+                user_input(label=_("search_placeholder"), icon="search", value=query_value)
                 .classes(remove='w-full', add='flex-1')
                 .props(remove='outlined')
                 .on("keydown.enter", lambda: handle_search(search_query=search_input.value))
             )
-            submit_button(text="Search", on_click=lambda: handle_search(search_query=search_input.value)).classes(remove='w-full shadow')
+            submit_button(text=_("search_title"), on_click=lambda: handle_search(search_query=search_input.value)).classes(remove='w-full shadow')
 
         loading_spinner = ui.spinner(size='lg').classes('self-center')
         loading_spinner.visible = False

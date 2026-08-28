@@ -4,6 +4,7 @@ from services import get_user_shelf, get_unique_shelf_genres, filter_user_shelf
 from models import BookState
 
 from views.theme import apply_theme
+from views.i18n import _
 from views.components import (
     render_header,
     render_mobile_bottom_bar,
@@ -30,16 +31,16 @@ def my_shelf_page() -> None:
 
     with ui.column().classes('max-w-7xl w-full mx-auto px-4 md:px-0 py-4 gap-6 items-center pb-28 sm:pb-4'):
         with ui.row().classes('w-full justify-between items-end'):
-            ui.label(f"My Shelf").classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
+            ui.label(_("my_shelf_title")).classes("text-3xl text-slate-700 dark:text-neutral-200 font-medium")
             with ui.row().classes('items-center gap-1 cursor-pointer group').on('click', lambda: ui.navigate.to('/search')):
                 ui.icon("add").classes('text-slate-700 dark:text-neutral-200 font-bold group-hover:text-slate-500 dark:group-hover:text-neutral-400')
-                ui.label("Add books").classes('text-slate-700 dark:text-neutral-200 font-bold group-hover:text-slate-500 dark:group-hover:text-neutral-400')
+                ui.label(_("my_shelf_add_books")).classes('text-slate-700 dark:text-neutral-200 font-bold group-hover:text-slate-500 dark:group-hover:text-neutral-400')
 
         ui.separator().classes('w-full mb-5')
 
         with ui.row().classes('w-full max-w-6xl items-center gap-3 flex-col sm:flex-row'):
             query = (
-                user_input(label="Search your books", icon="search")
+                user_input(label=_("my_shelf_search_books"), icon="search")
                 .on('keydown.enter', lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value))
                 .on('blur', lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value))
                 .classes("sm:flex-1")
@@ -48,15 +49,15 @@ def my_shelf_page() -> None:
 
             with ui.row().classes('w-full sm:w-auto gap-3 flex-1'):
                 state = user_select(
-                    label="State",
-                    options={None: "All states", **{state: state.value.title() for state in BookState}},
+                    label=_("book_state"),
+                    options={None: _("bookstate_all_states"), **{state: _(f"bookstate_{state.value}") for state in BookState}},
                     value=None,
                     on_change=lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value),
                     icon="bookmark_border"
                 ).classes(remove="w-full", add="flex-1 sm:w-44")
                 genre = user_select(
-                    label="Genre",
-                    options={None: "All genres", **{genre.lower(): genre for genre in get_unique_shelf_genres(shelf=user_shelf)}},
+                    label=_("book_genre"),
+                    options={None: _("book_all_genres"), **{genre.lower(): genre for genre in get_unique_shelf_genres(shelf=user_shelf)}},
                     value=None,
                     on_change=lambda: handle_filter_shelf(query=query.value, state=state.value, genre=genre.value),
                     icon='book'

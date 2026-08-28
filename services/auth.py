@@ -9,7 +9,7 @@ def register_user(username: str, password: str) -> User | None:
         user = session.scalars(stmt).first()
 
         if user:
-            raise ValueError(f"User '{username}' already exists.")
+            raise ValueError("error_username_already_exists")
 
         user = User(username=username, password=password)
 
@@ -27,10 +27,10 @@ def authenticate_user(username: str, password: str) -> User | None:
         user = session.scalars(stmt).first()
 
         if not user:
-            raise ValueError(f"User '{username}' does not exist.")
+            raise ValueError("error_user_usrname_does_not_exist")
 
         if not user.check_password(password=password):
-            raise ValueError(f"Invalid password for user '{username}'")
+            raise ValueError("error_invalid_password")
 
         session.expunge(user)
         return user
@@ -40,10 +40,10 @@ def delete_user(user_id: int, password: str) -> bool:
         user = session.get(User, user_id)
 
         if not user:
-            raise ValueError(f"User does not exist.")
+            raise ValueError("error_user_does_not_exist")
 
         if not user.check_password(password=password):
-            raise ValueError(f"Invalid password for user '{user.username}'")
+            raise ValueError("error_invalid_password")
 
         session.delete(user)
         session.commit()
@@ -56,11 +56,11 @@ def update_username(user_id: int, new_username: str) -> None:
         existing_user = session.scalar(stmt)
 
         if existing_user and existing_user.id != user_id:
-            raise ValueError(f"User '{new_username}' already exists.")
+            raise ValueError("error_username_already_exists")
 
         user = session.get(User, user_id)
         if not user:
-            raise ValueError("Current user no longer exists.")
+            raise ValueError("error_user_no_longer_exists")
         
         user.username = new_username
         session.commit()
@@ -70,10 +70,10 @@ def update_password(user_id: int, new_password: str) -> None:
         user = session.get(User, user_id)
 
         if not user:
-            raise ValueError(f"User does not exist.")
+            raise ValueError("error_user_does_not_exist")
         
         if user.check_password(password=new_password):
-            raise ValueError(f"This password is already being used.")
+            raise ValueError("error_password_already_used")
 
         user.password = new_password
         session.commit()

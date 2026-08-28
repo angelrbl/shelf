@@ -38,6 +38,7 @@ Shelf is a Python web app built with [NiceGUI](https://nicegui.io/) for tracking
 - **Reading stats** — yearly totals, average rating, genre breakdown, and a reading activity heatmap.
 - **Auth & profile** — login and a personal profile page.
 - **Light & dark mode** — toggle between light and dark themes from the header; your preference is remembered between sessions.
+- **Multi-language UI** — switch between English and Spanish from the header; your choice is remembered for the session.
 
 > Not every feature is fully polished yet — this is a work in progress.
 
@@ -71,6 +72,7 @@ https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
 | Hosting       | [Render](https://render.com/)                                     |
 | External data | Google Books API                                                  |
 | Charts        | ECharts                                                           |
+| Localization  | Custom JSON-based i18n (English default, Spanish)                 |
 | Testing       | Pytest                                                            |
 
 ## Project structure
@@ -79,15 +81,18 @@ https://github.com/user-attachments/assets/edd1b943-6737-4f73-b62d-133cd0a7378e
 shelf/
 ├── core/                # Config, DB setup
 ├── data/                 # SQLite database
-├── models/               # SQLAlchemy models
-├── services/              # auth, catalog, library, network, stats
-├── static/               # Static assets
+├── locales/               # Translation dictionaries (en.json, es.json)
+├── models/                 # SQLAlchemy models
+├── services/                # auth, catalog, library, network, stats, i18n
+├── static/                 # Static assets
 ├── tests/
 │   ├── models/
-│   └── services/          # Tests per service
+│   └── services/             # Tests per service (incl. i18n)
 ├── views/
-│   ├── components/        # books, shelf, network, profile, settings, stats...
-│   └── pages/              # login, my_shelf, search, profile, settings
+│   ├── components/            # books, shelf, network, profile, settings, stats...
+│   ├── pages/                   # login, my_shelf, search, profile, settings
+│   └── i18n.py                   # `_()` translation helper + language switcher
+│   └── theme.py                   # theme regarding functions
 ├── main.py
 ├── pyproject.toml
 ├── requirements.txt
@@ -128,7 +133,7 @@ python main.py
 - [ ] Expand and polish the recommendation engine
 - [x] Richer stats & dashboards
 - [x] Deploy Shelf on the web
-- [ ] Multiple language support (en/es)
+- [x] Multiple language support (en/es)
 - [x] UI tweaks and appearance; dark mode
 
 ## License

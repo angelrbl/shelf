@@ -17,7 +17,7 @@ def add_book(
     with get_session() as session:
         if start_date and end_date:
             if start_date > end_date:
-                raise ValueError("End date must be older than starting date.")
+                raise ValueError("error_wrong_date_order")
         
         if book.id is None:
             stmt = select(Book).where(Book.google_book_id == book.google_book_id)
@@ -99,7 +99,7 @@ def toggle_most_wished(user_id: int, book_id: int, status: bool, max_limit: int 
             most_wished_count = session.execute(stmt).scalar()
             
             if most_wished_count >= max_limit:
-                raise ValueError(f"You can only have up to {max_limit} books in Most Wished.")
+                raise ValueError("error_too_many_wished_books")
             
         stmt = (
             update(UserBook)

@@ -38,7 +38,7 @@ def _search_books_from_google_api(query: str, max_results: int=5) -> list[dict]:
     except requests.exceptions.RequestException as err:
         print(f"Error with Google API: {err}")
 
-        raise GoogleAPIError("Failed to fetch data from Google Books API. Please, try again.")
+        raise GoogleAPIError("error_google_book_api")
     books_data = []
 
     items = data.get("items") or []
