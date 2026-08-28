@@ -2,7 +2,16 @@
     "_comment": "Testing",
     "test_key": "soy español",
 
-    "_login_comment": "Login Page",
+    "_login_comment": "Log In Page",
+    "login_log_in": "Iniciar Sesión",
+    "login_register": "Registro",
+    "login_username": "Nombre de usuario",
+    "login_password": "Contraseña",
+    "login_repeat_password": "Repetir contraseña",
+    "login_account_created": "¡Cuenta creada con éxito! Por favor, inicia la sesión.",
+    "login_make_account": "Crear cuenta",
+
+    "_layout_comment": "Header Page",
     "nav_my_page": "Mi Shelf",
     "nav_search": "Buscar",
     "nav_profile": "Perfil",
@@ -52,6 +61,11 @@
     "book_genre": "Género",
     "books_genres": "Géneros",
     "book_all_genres": "Todos los géneros",
+
+    "_my_shelf_comment": "My Shelf Page",
+    "my_shelf_title": "Mi Shelf",
+    "my_shelf_add_books": "Añadir libros",
+    "my_shelf_search_books": "Buscar mis libros",
     
     "_shelf_comment": "Shelf.py",
     "shelf_on_the_nightstand": "En la mesita",
@@ -67,6 +81,10 @@
     "shelf_added_to_most_wished": "¡Libro añadido a tus más deseados!",
     "shelf_select_a_book": "Elige un libro",
     "shelf_search_books": "Buscar tus libros",
+
+    "_search_comment": "Search Page",
+    "search_title": "Buscar",
+    "search_placeholder": "Prueba a buscar algo (i.e. 'Hamlet', '@shelf'...)",
 
     "_network_comment": "Network Page",
     "network_no_longer_follow": "Has dejado de seguir a @{target_username}",
@@ -87,6 +105,10 @@
     "profile_open_settings": "Abrir ajustes",
 
     "_settings_comment": "Settings Page",
+    "settings_title": "Ajustes",
+    "settings_go_back": "Volver",
+    "settings_account": "Cuenta",
+    "settings_privacy": "Privacidad",
     "settings_public_text": "Público",
     "settings_friends_text": "Solo Amigos",
     "settings_private_text": "Privado",

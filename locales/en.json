@@ -3,7 +3,16 @@
     "test_key": "i am english",
     "test_fallback": "i am also english",
 
-    "_login_comment": "Login Page",
+    "_login_comment": "Log In Page",
+    "login_log_in": "Log In",
+    "login_register": "Register",
+    "login_username": "Username",
+    "login_password": "Password",
+    "login_repeat_password": "Repeat password",
+    "login_account_created": "Account created successfully! Please, log in.",
+    "login_make_account": "Make account",
+
+    "_layout_comment": "Header Page",
     "nav_my_page": "My Shelf",
     "nav_search": "Search",
     "nav_profile": "Profile",
@@ -54,6 +63,11 @@
     "books_genres": "Genres",
     "book_all_genres": "All genres",
     
+    "_my_shelf_comment": "My Shelf Page",
+    "my_shelf_title": "My Shelf",
+    "my_shelf_add_books": "Add Books",
+    "my_shelf_search_books": "Search my books",
+
     "_shelf_comment": "Shelf.py",
     "shelf_on_the_nightstand": "On the nightstand",
     "shelf_top_shelf": "Top shelf",
@@ -68,6 +82,10 @@
     "shelf_added_to_most_wished": "Book added to most wished!",
     "shelf_select_a_book": "Select a book",
     "shelf_search_books": "Search your books",
+
+    "_search_comment": "Search Page",
+    "search_title": "Search",
+    "search_placeholder": "Search anything (i.e. 'Hamlet', '@shelf'...)",
 
     "_network_comment": "Network Page",
     "network_no_longer_follow": "You no longer follow @{target_username}",
@@ -88,6 +106,10 @@
     "profile_open_settings": "Open settings",
 
     "_settings_comment": "Settings Page",
+    "settings_title": "Settings",
+    "settings_go_back": "Go back",
+    "settings_account": "Account settings",
+    "settings_privacy": "Privacy settings",
     "settings_public_text": "Public",
     "settings_friends_text": "Friends Only",
     "settings_private_text": "Private",
@@ -133,5 +155,6 @@
     "error_user_does_not_exist": "User does not exist.",
     "error_user_no_longer_exists": "Current user no longer exists.",
     "error_password_already_used": "This password is already being used.",
-    "error_too_many_wished_books": "You can only have up to {max_limit} books in Most Wished."
+    "error_too_many_wished_books": "You can only have up to {max_limit} books in Most Wished.",
+    "error_google_book_api": "Failed to fetch data from Google Books API. Please, try again."
 }
