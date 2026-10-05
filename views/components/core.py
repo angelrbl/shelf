@@ -7,7 +7,7 @@ def user_input(label: str, icon: str, password: bool=False, password_toggle_butt
         ui.icon(icon)
     return base_input
 
-def submit_button(text: str, on_click: function) -> ui.button:
+def submit_button(text: str, on_click: callable) -> ui.button:
     return ui.button(text=text, on_click=on_click).classes('w-full shadow rounded-lg pt-2 pb-2')
 
 def icon_button(icon: str, color: str, tooltip: str, dark: str | None = None, on_click: callable | None = None) -> ui.button:
